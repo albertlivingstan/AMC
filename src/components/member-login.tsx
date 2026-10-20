@@ -148,24 +148,30 @@ export function MemberLoginModal({ isOpen, onClose }: { isOpen: boolean; onClose
 
             <label className="block text-xs font-semibold text-neutral-700">
               Full Name (Username)
+              <span className="block text-[11px] font-normal text-neutral-500 mt-0.5">
+                Example: Daniel Joseph
+              </span>
               <input 
                 required 
                 type="text"
                 value={name}
                 onChange={e => setName(e.target.value)}
-                placeholder="e.g. Albert Livingstan G"
+                placeholder="Example: Daniel Joseph"
                 className="w-full mt-1 border border-neutral-300 rounded-lg px-3 py-2 text-xs"
               />
             </label>
 
             <label className="block text-xs font-semibold text-neutral-700">
-              Date of Birth / Password (e.g. 2005-05-29 or 29052005)
+              Date of Birth / Password
+              <span className="block text-[11px] font-normal text-neutral-500 mt-0.5">
+                Example: 2004-08-15 or 15082004
+              </span>
               <input 
                 required 
                 type="text"
                 value={dob}
                 onChange={e => setDob(e.target.value)}
-                placeholder="2005-05-29 or 29052005"
+                placeholder="Example: 2004-08-15 or 15082004"
                 className="w-full mt-1 border border-neutral-300 rounded-lg px-3 py-2 text-xs"
               />
             </label>

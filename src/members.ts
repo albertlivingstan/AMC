@@ -4,6 +4,7 @@ export type Member = {
 };
 
 export const membersDatabase: Member[] = [
+  { name: "Daniel Joseph", dob: "2004-08-15" },
   { name: "S Elisa David Pratap", dob: "1990-11-29" },
   { name: "Swathy B", dob: "1999-10-24" },
   { name: "N.sumi", dob: "1985-07-23" },
