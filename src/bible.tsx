@@ -1,7 +1,8 @@
 import {useState,useEffect,useRef} from 'react';
 import {Link} from 'react-router-dom';
-import {BookOpen,Heart,Share2,Copy,ChevronLeft,ChevronRight,Search,Download,MessageCircle,Send,X,Monitor,Trash2,CalendarDays} from 'lucide-react';
+import {BookOpen,Heart,Share2,Copy,ChevronLeft,ChevronRight,Search,Download,MessageCircle,Send,X,Monitor,Trash2,CalendarDays,Sun,Moon} from 'lucide-react';
 import daily from './daily-verses.json';
+import { useTheme } from './theme';
 
 type Lang = 'ta' | 'en' | 'both';
 type Verse = { n: number; text: string };
@@ -326,6 +327,7 @@ export function DailyVerse({variant='default'}:{variant?:'default'|'home'|'featu
 }
 
 export function BibleReader({ compact = false, onSelect }: { compact?: boolean; onSelect?: (text: string) => void }) {
+  const { isDark, toggleTheme } = useTheme();
   const [lang, setLang] = useLocal<Lang>('am-bible-language', 'ta'), [book, setBook] = useLocal<number>('am-bible-book', 19), [chapter, setChapter] = useLocal<number>('am-bible-chapter', 23);
   const [index, setIndex] = useState<any>(null), [ta, setTa] = useState<Book | null>(null), [en, setEn] = useState<Book | null>(null), [q, setQ] = useState(''), [error, setError] = useState(''), [selected, setSelected] = useState(1), [results, setResults] = useState<any[] | null>(null), [searching, setSearching] = useState(false), [onlySaved, setOnlySaved] = useState(false);
   const [saved, setSaved] = useLocal<string[]>('am-saved-verses', []);
@@ -391,6 +393,16 @@ export function BibleReader({ compact = false, onSelect }: { compact?: boolean; 
     </div>}
     <div className="bible-controls">
       <Language value={lang} onChange={setLang}/>
+      <button 
+        type="button" 
+        className="reader-theme-toggle" 
+        onClick={toggleTheme} 
+        aria-label={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
+        title={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
+      >
+        {isDark ? <Sun size={15}/> : <Moon size={15}/>}
+        <span>{isDark ? 'Light mode' : 'Dark mode'}</span>
+      </button>
       <label>Book
         <select value={book} aria-label="Select book" onChange={e => { setBook(Number(e.target.value)); setChapter(1); setResults(null); }}>
           {index?.[lang === 'en' ? 'en' : 'ta'].books.map((b: any) => <option key={b.id} value={b.id}>{b.name}</option>)}

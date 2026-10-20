@@ -274,7 +274,7 @@
   .ref-header .ministry-brand > span { font-size: 18px; }
   .ref-header .ministry-brand small { font-size: 13px; letter-spacing: .19em; }
   .ref-header .ministry-brand::after { content: 'BIBLE · WORSHIP · COMMUNITY'; position: absolute; bottom: -13px; left: 0; right: 0; text-align: center; font-size: 6px; letter-spacing: .19em; color: #775b49; font-family: 'DM Sans',sans-serif; }
-  .ref-header .ref-header-actions { gap: 0; }
+  .ref-header .ref-header-actions { gap: 6px; }
   .reference-shell .ref-bottom-nav { display: grid; grid-template-columns: repeat(5,minmax(0,1fr)); position: fixed; bottom: 0; inset-inline: 0; height: calc(72px + env(safe-area-inset-bottom,0px)); padding: 7px 10px calc(8px + env(safe-area-inset-bottom,0px)); background: #fffaf2f5; border: 1px solid #eadcc8; border-bottom: 0; border-radius: 23px 23px 0 0; box-shadow: 0 -8px 30px #78542a0c; z-index: 60; backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px); }
   .ref-bottom-nav a { display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 4px; min-height: 48px; color: #756b62; padding: 3px 0; }
   .ref-bottom-nav a::after { display: none; }
@@ -434,4 +434,344 @@
 }
 @media(min-width:821px) and (max-width:1120px) {
   .ref-header-live { display: none; }
+}
+
+/* =========================================================================
+   Theme Toggle & Dark Mode Support
+   ========================================================================= */
+
+/* Theme Toggle Button in Header */
+.ref-theme-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  border: 1px solid var(--ref-border);
+  background: var(--ref-sand);
+  color: var(--ref-wine);
+  cursor: pointer;
+  transition: all .2s ease;
+  flex-shrink: 0;
+}
+.ref-theme-toggle:hover {
+  transform: scale(1.05);
+  background: var(--ref-card);
+}
+.ref-theme-toggle:active {
+  transform: scale(.95);
+}
+
+/* Theme Drawer Toggle */
+.ref-drawer-theme {
+  margin-top: 14px;
+  padding-top: 16px;
+  border-top: 1px solid var(--ref-border);
+}
+.ref-theme-pill {
+  width: 100%;
+  min-height: 46px;
+  padding: 10px 14px;
+  border-radius: 10px;
+  border: 1px solid var(--ref-border);
+  background: var(--ref-sand);
+  color: var(--ref-wine-dark);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 13px;
+  font-weight: 550;
+  cursor: pointer;
+  transition: background .2s, transform .2s;
+}
+.ref-theme-pill:hover {
+  background: var(--ref-card);
+  transform: translateY(-1px);
+}
+.ref-theme-tag {
+  margin-left: auto;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  padding: 3px 8px;
+  border-radius: 20px;
+  background: var(--ref-border);
+  color: inherit;
+}
+
+/* Reader Theme Toggle in Bible Reader */
+.reader-theme-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  min-height: 38px;
+  padding: 6px 14px;
+  border-radius: 30px;
+  border: 1px solid var(--ref-border);
+  background: var(--ref-sand);
+  color: var(--ref-wine-dark);
+  font-size: 12px;
+  font-weight: 550;
+  cursor: pointer;
+  transition: all .2s ease;
+}
+.reader-theme-toggle:hover {
+  background: var(--ref-card);
+  transform: translateY(-1px);
+}
+
+/* Dark Theme Variables & Styles */
+html.dark .reference-shell,
+.reference-shell.dark-theme,
+.reference-shell[data-theme='dark'],
+html.dark body {
+  --ref-wine: #e8a2af;
+  --ref-wine-dark: #fce4e8;
+  --ref-paper: #0a0f19;
+  --ref-card: #121927;
+  --ref-sand: #1a2538;
+  --ref-gold: #e2be82;
+  --ref-ink: #f4eee5;
+  --ref-muted: #9aa8b9;
+  --ref-border: #233146;
+  --navy: #182336;
+  color: var(--ref-ink);
+  background: var(--ref-paper);
+}
+
+html.dark body {
+  background: #0a0f19 !important;
+  color: #f4eee5 !important;
+}
+
+/* Header Dark */
+html.dark .ref-header {
+  background: #0a0f19f2 !important;
+  border-bottom: 1px solid var(--ref-border) !important;
+  color: var(--ref-wine-dark) !important;
+}
+html.dark .ref-header .ministry-brand {
+  color: var(--ref-wine-dark) !important;
+}
+html.dark .ref-header .ministry-brand img {
+  border-color: #e2be8266 !important;
+  background: #121927 !important;
+}
+html.dark .ref-header .ref-desktop-nav {
+  color: #a4b3c4 !important;
+}
+html.dark .ref-header .ref-desktop-nav a[aria-current=page] {
+  color: #fce4e8 !important;
+}
+html.dark .ref-header .ref-menu-toggle,
+html.dark .ref-header .ref-bell,
+html.dark .ref-header .ref-header-profile {
+  color: #fce4e8 !important;
+}
+html.dark .ref-theme-toggle {
+  background: #1a2538;
+  border-color: #2b3b54;
+  color: #f7d382;
+}
+html.dark .ref-theme-toggle:hover {
+  background: #22314a;
+  color: #ffe096;
+}
+
+/* Drawer Dark */
+html.dark .ref-drawer {
+  background: #0e1522 !important;
+  box-shadow: 20px 0 70px #00000099 !important;
+  color: var(--ref-ink) !important;
+}
+html.dark .ref-drawer nav a {
+  color: #a8b7c8 !important;
+}
+html.dark .ref-drawer nav a[aria-current=page] {
+  background: #1a2538 !important;
+  color: #fce4e8 !important;
+}
+html.dark .ref-theme-pill {
+  background: #1a2538;
+  border-color: #28374e;
+  color: #fce4e8;
+}
+html.dark .ref-theme-pill:hover {
+  background: #22314a;
+}
+html.dark .ref-theme-tag {
+  background: #25344c;
+  color: #f7d382;
+}
+
+/* Mobile Bottom Nav Dark */
+html.dark .reference-shell .ref-bottom-nav {
+  background: #0c121ff8 !important;
+  border-color: #1e2a3c !important;
+  box-shadow: 0 -8px 30px #00000080 !important;
+}
+html.dark .ref-bottom-nav a {
+  color: #8897ab !important;
+}
+html.dark .ref-bottom-nav a.active {
+  color: #fce4e8 !important;
+}
+html.dark .ref-bottom-nav a.active > span {
+  background: #e8a2af18 !important;
+}
+
+/* Home Hub & Cards Dark */
+html.dark .ref-home-hub {
+  background: #0f1624 !important;
+  border-color: #1f2c40 !important;
+  box-shadow: 0 12px 45px #00000050 !important;
+}
+html.dark .ref-quick-grid > a {
+  background: linear-gradient(140deg, #162030, #1d2a3e) !important;
+  border-color: #25364e !important;
+  color: #fce4e8 !important;
+  box-shadow: 0 3px 10px #00000040 !important;
+}
+html.dark .ref-quick-grid > a:first-child {
+  background: linear-gradient(135deg, #7b1d30, #54111d) !important;
+  color: #fff8ee !important;
+  border-color: #54111d !important;
+}
+
+/* Daily Verse Dark */
+html.dark .reference-shell .daily-front {
+  background: #121927 !important;
+  border-color: #233146 !important;
+  color: #f4eee5 !important;
+}
+html.dark .reference-shell .daily-verse-text blockquote {
+  color: #fffbf5 !important;
+}
+html.dark .reference-shell .daily-verse-text .secondary-verse {
+  color: #a4b3c4 !important;
+}
+html.dark .reference-shell .daily-verse-text cite {
+  color: #e2be82 !important;
+}
+html.dark .reference-shell .language-switch {
+  background: #1a2538 !important;
+  color: #e2be82 !important;
+}
+html.dark .reference-shell .language-switch button.selected {
+  background: #731a2b !important;
+  color: #fff8ee !important;
+}
+html.dark .reference-shell .verse-actionbar button {
+  color: #fce4e8 !important;
+  border-color: #28374e !important;
+}
+html.dark .reference-shell .verse-actionbar button:hover,
+html.dark .reference-shell .verse-actionbar button[aria-pressed=true] {
+  background: #e2be8222 !important;
+}
+html.dark .ref-bible-home .daily-verse-text {
+  background: linear-gradient(100deg, #121927f2, #182337e6), url('/images/church.jpg') center/cover !important;
+  border-color: var(--ref-border) !important;
+}
+
+/* Common Card Dark Styles */
+html.dark .reference-shell .ref-reading-card,
+html.dark .reference-shell .ref-announcement-item,
+html.dark .reference-shell .ref-empty-card,
+html.dark .reference-shell .ref-profile-card,
+html.dark .reference-shell .ref-profile-options,
+html.dark .reference-shell .ref-prayer-card,
+html.dark .reference-shell .form-card,
+html.dark .reference-shell .song-card,
+html.dark .reference-shell .sermon-card,
+html.dark .reference-shell .event-card,
+html.dark .reference-shell .calendar,
+html.dark .reference-shell .live-status-card {
+  background: var(--ref-card) !important;
+  border-color: var(--ref-border) !important;
+  color: var(--ref-ink) !important;
+}
+html.dark .ref-reading-art {
+  background: linear-gradient(145deg, #2b3952, #162030) !important;
+  color: #e2be82 !important;
+}
+html.dark .ref-announcement-icon {
+  background: #1a2538 !important;
+  color: #e2be82 !important;
+}
+html.dark .ref-profile-stats > a {
+  background: #151e2e !important;
+  border-color: var(--ref-border) !important;
+  color: var(--ref-wine-dark) !important;
+}
+html.dark .ref-profile-avatar {
+  background: #1a2538 !important;
+  border-color: #2b3b54 !important;
+  color: #fce4e8 !important;
+}
+
+/* Bible Reader Dark */
+html.dark .bible-reader {
+  background: var(--ref-paper) !important;
+}
+html.dark .bible-verses article.selected-verse {
+  background: #182335 !important;
+  box-shadow: inset 3px 0 var(--ref-gold) !important;
+}
+html.dark .bible-verses article p {
+  color: #f4eee5 !important;
+}
+html.dark .english-parallel {
+  color: #9baac0 !important;
+}
+html.dark .bible-search,
+html.dark .bible-controls select {
+  background: #131b29 !important;
+  border-color: var(--ref-border) !important;
+  color: #f4eee5 !important;
+}
+html.dark .bible-search input {
+  color: #f4eee5 !important;
+}
+html.dark .verse-community {
+  background: #131b29 !important;
+  border-color: var(--ref-border) !important;
+  color: #f4eee5 !important;
+}
+html.dark .verse-community input,
+html.dark .verse-community textarea {
+  background: #192436 !important;
+  border-color: #283a52 !important;
+  color: #f4eee5 !important;
+}
+html.dark .verse-share-dialog,
+html.dark .modal {
+  background: #121927 !important;
+  color: #f4eee5 !important;
+  border: 1px solid var(--ref-border) !important;
+}
+html.dark .reference-shell input,
+html.dark .reference-shell select,
+html.dark .reference-shell textarea {
+  background: #162132;
+  border-color: var(--ref-border);
+  color: #f4eee5;
+}
+
+/* Footer Dark */
+html.dark .reference-shell footer {
+  background: #070b13 !important;
+  border-top-color: #192334 !important;
+  color: #8b99ac !important;
+}
+html.dark .reference-shell footer p,
+html.dark .reference-shell footer .footer-bottom,
+html.dark .reference-shell footer .social-links a,
+html.dark .reference-shell footer .footer-top a {
+  color: #8b99ac !important;
+}
+html.dark .reference-shell footer .brand {
+  color: var(--ref-wine-dark) !important;
 }

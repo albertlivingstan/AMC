@@ -6,7 +6,7 @@ import {ProStudio,ProAudience} from './presentation';
 import React, { useEffect, useState, useRef, createContext, useContext } from 'react';
 import { BrowserRouter, Routes, Route, Link, useLocation, useParams } from 'react-router-dom';
 import { motion, MotionConfig, AnimatePresence } from 'framer-motion';
-import { ArrowRight, ArrowUpRight, Play, Pause, Heart, Search, Menu, X, ChevronLeft, ChevronRight, Copy, Share2, Maximize, Monitor, Plus, Music2, Volume2, SkipForward, SkipBack, Check, CalendarDays, Clock, MapPin, BookOpen, Download, Trash2, Settings, ExternalLink, Mail, Cross, Shield, MessageCircle, Send, Bell, MoreHorizontal, Bookmark, AlertCircle, Radio, User, Users, Home as HomeIcon } from 'lucide-react';
+import { ArrowRight, ArrowUpRight, Play, Pause, Heart, Search, Menu, X, ChevronLeft, ChevronRight, Copy, Share2, Maximize, Monitor, Plus, Music2, Volume2, SkipForward, SkipBack, Check, CalendarDays, Clock, MapPin, BookOpen, Download, Trash2, Settings, ExternalLink, Mail, Cross, Shield, MessageCircle, Send, Bell, MoreHorizontal, Bookmark, AlertCircle, Radio, User, Users, Home as HomeIcon, Sun, Moon } from 'lucide-react';
 import './style.css';
 import './mobile-reference.css';
 import { initialSongs, verses, sermons, type Song } from './content';
@@ -17,6 +17,7 @@ import { collection, getDocs, addDoc, deleteDoc, doc, setDoc, onSnapshot, query,
 import { NotificationBellWithModal } from './components/notifications-manager';
 import { useMemberAuth, MemberLoginModal } from './components/member-login';
 import { membersDatabase } from './members';
+import { useTheme } from './theme';
 
 function useTitle(t: string) {
   useEffect(() => {
@@ -237,6 +238,7 @@ function Shell() {
   const location = useLocation();
   const { alerts, alertDismissed, setAlertDismissed, liveInfo, alertsModal, setAlertsModal } = useApp();
   const { currentUser, logout } = useMemberAuth();
+  const { theme, toggleTheme, isDark } = useTheme();
   const menuRef = useRef<HTMLElement>(null);
   const toggleRef = useRef<HTMLButtonElement>(null);
   const links = [
@@ -269,16 +271,32 @@ function Shell() {
     document.addEventListener('keydown', key);
     return () => { document.body.style.overflow = overflow; document.removeEventListener('keydown', key); previous?.focus(); };
   }, [menu]);
-  return <div className="reference-shell">
+  return <div className={`reference-shell ${isDark ? 'dark-theme' : ''}`} data-theme={theme}>
     <a className="skip" href="#main">Skip to content</a>
     {alerts.length > 0 && !alertDismissed && <div className="ref-alert" role="status"><AlertCircle size={16}/><p>{alerts[0].message}</p><button onClick={() => setAlertDismissed(true)} aria-label="Dismiss church alert"><X size={18}/></button></div>}
     <header className="ref-header">
       <button className="ref-menu-toggle" ref={toggleRef} onClick={() => setMenu(true)} aria-expanded={menu} aria-controls="ministry-menu" aria-label="Open ministry menu"><Menu size={23}/></button>
       <Brand/>
       <nav className="ref-desktop-nav" aria-label="Main navigation">{[['Home','/'],['Bible','/bible'],['Worship','/worship'],['Community','/community'],['About','/about']].map(([label,to]) => <Link key={to} to={to} aria-current={location.pathname === to ? 'page' : undefined}>{label}</Link>)}</nav>
-      <div className="ref-header-actions"><Link className="ref-header-profile" to="/profile"><User size={17}/>{currentUser ? 'My profile' : 'Member sign in'}</Link><Link className="ref-header-live" to="/live"><Play size={13} fill="currentColor"/>Watch worship</Link><button className="ref-bell" onClick={() => setAlertsModal(true)} aria-label="Open notifications"><Bell size={24}/>{(alerts.length > 0 || liveInfo?.isLive) && <span/>}</button></div>
+      <div className="ref-header-actions">
+        <Link className="ref-header-profile" to="/profile"><User size={17}/>{currentUser ? 'My profile' : 'Member sign in'}</Link>
+        <Link className="ref-header-live" to="/live"><Play size={13} fill="currentColor"/>Watch worship</Link>
+        <button 
+          type="button"
+          className="ref-theme-toggle" 
+          onClick={toggleTheme} 
+          aria-label={isDark ? 'Switch to light mode' : 'Switch to dark mode'} 
+          title={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
+        >
+          {isDark ? <Sun size={19}/> : <Moon size={19}/>}
+        </button>
+        <button className="ref-bell" onClick={() => setAlertsModal(true)} aria-label="Open notifications">
+          <Bell size={24}/>
+          {(alerts.length > 0 || liveInfo?.isLive) && <span/>}
+        </button>
+      </div>
     </header>
-    <AnimatePresence>{menu && <div className="ref-drawer-layer"><button className="ref-drawer-backdrop" onClick={() => setMenu(false)} aria-label="Close ministry menu backdrop" tabIndex={-1}/><motion.aside className="ref-drawer" id="ministry-menu" role="dialog" aria-modal="true" aria-labelledby="ministry-menu-title" ref={menuRef} initial={{x:'-100%'}} animate={{x:0}} exit={{x:'-100%'}} transition={{duration:.24}}><div className="ref-drawer-heading"><h2 id="ministry-menu-title">Welcome home.</h2><button onClick={() => setMenu(false)} aria-label="Close ministry menu"><X size={22}/></button></div><p>A place to belong. A faith to live.</p><nav aria-label="All ministry pages">{links.map(([label,to]) => <Link to={to} key={to} onClick={() => setMenu(false)} aria-current={location.pathname === to ? 'page' : undefined}>{label}<ChevronRight size={16}/></Link>)}</nav><SocialLinks/></motion.aside></div>}</AnimatePresence>
+    <AnimatePresence>{menu && <div className="ref-drawer-layer"><button className="ref-drawer-backdrop" onClick={() => setMenu(false)} aria-label="Close ministry menu backdrop" tabIndex={-1}/><motion.aside className="ref-drawer" id="ministry-menu" role="dialog" aria-modal="true" aria-labelledby="ministry-menu-title" ref={menuRef} initial={{x:'-100%'}} animate={{x:0}} exit={{x:'-100%'}} transition={{duration:.24}}><div className="ref-drawer-heading"><h2 id="ministry-menu-title">Welcome home.</h2><button onClick={() => setMenu(false)} aria-label="Close ministry menu"><X size={22}/></button></div><p>A place to belong. A faith to live.</p><nav aria-label="All ministry pages">{links.map(([label,to]) => <Link to={to} key={to} onClick={() => setMenu(false)} aria-current={location.pathname === to ? 'page' : undefined}>{label}<ChevronRight size={16}/></Link>)}</nav><div className="ref-drawer-theme"><button type="button" onClick={toggleTheme} className="ref-theme-pill" aria-label={isDark ? 'Switch to light mode' : 'Switch to dark mode'}>{isDark ? <Sun size={18}/> : <Moon size={18}/>}<span>{isDark ? 'Switch to Light mode' : 'Switch to Dark mode'}</span><span className="ref-theme-tag">{isDark ? 'Dark' : 'Light'}</span></button></div><SocialLinks/></motion.aside></div>}</AnimatePresence>
     {alertsModal && <NotificationBellWithModal isOpen onClose={() => setAlertsModal(false)}/>}
     {loginModal && <MemberLoginModal isOpen onClose={() => setLoginModal(false)}/>}
     <MotionEnhancements/>
@@ -286,8 +304,10 @@ function Shell() {
       <Route path="/" element={<Home/>}/><Route path="/worship" element={<Worship/>}/>
       <Route path="/sermons" element={<Sermons/>}/><Route path="/sermons/:id" element={<SermonDetail/>}/>
       <Route path="/announcements" element={<Announcements/>}/><Route path="/admin" element={<Admin/>}/>
-      <Route path="/bible" element={<BibleLanding isLive={liveInfo?.isLive} liveTitle={liveInfo?.title}/>}/>
-      <Route path="/bible/read" element={<BibleReader/>}/><Route path="/live" element={<LivePage/>}/>
+      <Route path="/bible" element={<BibleReader/>}/>
+      <Route path="/bible/read" element={<BibleReader/>}/>
+      <Route path="/bible/overview" element={<BibleLanding isLive={liveInfo?.isLive} liveTitle={liveInfo?.title}/>}/>
+      <Route path="/live" element={<LivePage/>}/>
       <Route path="/community" element={<CommunityOverview alerts={alerts}/>}/>
       <Route path="/profile" element={<MemberProfile member={currentUser} onLogin={() => setLoginModal(true)} onLogout={logout} onNotifications={() => setAlertsModal(true)}/>}/>
       <Route path="/about" element={<About/>}/><Route path="/prayer" element={<Prayer/>}/><Route path="/contact" element={<Contact/>}/>
@@ -298,7 +318,7 @@ function Shell() {
       {label:'Home',to:'/',Icon:HomeIcon},{label:'Bible',to:'/bible',Icon:BookOpen},
       {label:'Worship',to:'/worship',Icon:Music2},{label:'Community',to:'/community',Icon:Users},
       {label:'Profile',to:'/profile',Icon:User}
-    ].map(({label,to,Icon}) => {const active=to==='/'?location.pathname==='/':location.pathname.startsWith(to);return <Link key={to} to={to} aria-current={active?'page':undefined} className={active?'active':''}><span><Icon size={22} strokeWidth={active?2:1.6}/></span><small>{label}</small></Link>;})}</nav>
+    ].map(({label,to,Icon}) => {const active=to==='/'?location.pathname==='/':(to==='/bible'?(location.pathname==='/bible'||location.pathname.startsWith('/bible')):location.pathname.startsWith(to));return <Link key={to} to={to} aria-current={active?'page':undefined} className={active?'active':''}><span><Icon size={22} strokeWidth={active?2:1.6}/></span><small>{label}</small></Link>;})}</nav>
   </div>;
 }
 

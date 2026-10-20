@@ -1,31 +1,41 @@
 'use client';
 import { useEffect, useState } from 'react';
 import { BrowserRouter } from 'react-router-dom';
+import { StartupSplash } from '../src/components/StartupSplash';
+import '../src/theme';
 
 let AppComp: any = null;
 
 export default function SiteClient() {
   const [mounted, setMounted] = useState(false);
+  const [ready, setReady] = useState(false);
 
   useEffect(() => {
+    let active = true;
     import('../src/main').then((m) => {
       AppComp = m.App;
-      setMounted(true);
+      if (active) {
+        setMounted(true);
+        Promise.resolve(document.fonts?.ready).finally(() => {
+          if (active) setReady(true);
+        });
+      }
+    }).catch(() => {
+      if (active) setReady(true);
     });
+    return () => { active = false; };
   }, []);
-
-  if (!mounted || !AppComp) {
-    return (
-      <div style={{minHeight:'100vh',background:'#101827',color:'#c9a76a',display:'grid',placeItems:'center',fontFamily:'serif'}}>
-        Anointing Ministries · Loading your worship space…
-      </div>
-    );
-  }
 
   const Comp = AppComp;
   return (
-    <BrowserRouter>
-      <Comp />
-    </BrowserRouter>
+    <StartupSplash ready={ready}>
+      {mounted && Comp ? (
+        <BrowserRouter>
+          <Comp />
+        </BrowserRouter>
+      ) : (
+        <div style={{ minHeight: '100vh', background: '#0a0f19' }} />
+      )}
+    </StartupSplash>
   );
 }
