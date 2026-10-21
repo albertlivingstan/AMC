@@ -405,7 +405,7 @@ function Announcements() {
           </div>
         </div>
 
-        {/* Visitor Canva Link Banner */}
+        {/* Anointing Ministries Announcement Banner */}
         <a 
           href="https://canva.link/j2vpxfi4m62ulqy" 
           target="_blank" 
@@ -413,9 +413,9 @@ function Announcements() {
           className="block bg-gradient-to-r from-amber-700 to-amber-900 text-white p-4 rounded-xl shadow-md hover:from-amber-800 hover:to-amber-950 transition flex items-center justify-between"
         >
           <div>
-            <span className="bg-white/20 text-white text-[10px] font-bold px-2 py-0.5 rounded uppercase tracking-wider">Visitor Welcome</span>
-            <h2 className="font-serif text-base font-bold mt-1">Anointing Ministries Visitor Guide ↗</h2>
-            <p className="text-xs text-amber-100 mt-0.5">Tap to open our visitor welcome card on Canva (https://canva.link/j2vpxfi4m62ulqy).</p>
+            <span className="bg-white/20 text-white text-[10px] font-bold px-2 py-0.5 rounded uppercase tracking-wider">Announcement</span>
+            <h2 className="font-serif text-base font-bold mt-1">Anointing Ministries Announcement ↗</h2>
+            <p className="text-xs text-amber-100 mt-0.5">Tap to view official church announcement & details (https://canva.link/j2vpxfi4m62ulqy).</p>
           </div>
           <ExternalLink size={22} className="text-amber-200 shrink-0 ml-3" />
         </a>
