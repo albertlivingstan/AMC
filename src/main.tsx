@@ -26,13 +26,15 @@ function useTitle(t: string) {
 }
 
 function useStored<T>(key: string, initial: T) {
-  const [v, set] = useState<T>(() => {
+  const [v, set] = useState<T>(initial);
+  useEffect(() => {
     try {
-      return JSON.parse(localStorage.getItem(key) || 'null') ?? initial;
-    } catch {
-      return initial;
-    }
-  });
+      const saved = localStorage.getItem(key);
+      if (saved !== null) {
+        set(JSON.parse(saved));
+      }
+    } catch {}
+  }, [key]);
   useEffect(() => {
     try {
       localStorage.setItem(key, JSON.stringify(v));
@@ -243,7 +245,7 @@ function Shell() {
   const toggleRef = useRef<HTMLButtonElement>(null);
   const links = [
     ['Home','/'], ['Bible','/bible'], ['Worship','/worship'], ['Live worship','/live'],
-    ['Community','/community'], ['Announcements','/announcements'], ['Prayer','/prayer'],
+    ['Announcements','/announcements'], ['Prayer','/prayer'],
     ['Sermons','/sermons'], ['About','/about'], ['Contact','/contact'], ['Profile','/profile'],
     ['Presentation studio','/worship/presentation'], ['Admin portal','/admin']
   ];
@@ -277,7 +279,7 @@ function Shell() {
     <header className="ref-header">
       <button className="ref-menu-toggle" ref={toggleRef} onClick={() => setMenu(true)} aria-expanded={menu} aria-controls="ministry-menu" aria-label="Open ministry menu"><Menu size={23}/></button>
       <Brand/>
-      <nav className="ref-desktop-nav" aria-label="Main navigation">{[['Home','/'],['Bible','/bible'],['Worship','/worship'],['Community','/community'],['About','/about']].map(([label,to]) => <Link key={to} to={to} aria-current={location.pathname === to ? 'page' : undefined}>{label}</Link>)}</nav>
+      <nav className="ref-desktop-nav" aria-label="Main navigation">{[['Home','/'],['Bible','/bible'],['Worship','/worship'],['Live','/live'],['About','/about']].map(([label,to]) => <Link key={to} to={to} aria-current={location.pathname === to ? 'page' : undefined}>{label}</Link>)}</nav>
       <div className="ref-header-actions">
         <Link className="ref-header-profile" to="/profile"><User size={17}/>{currentUser ? 'My profile' : 'Member sign in'}</Link>
         <Link className="ref-header-live" to="/live"><Play size={13} fill="currentColor"/>Watch worship</Link>
@@ -316,7 +318,7 @@ function Shell() {
     <Footer/>
     <nav className="ref-bottom-nav" aria-label="Mobile navigation">{[
       {label:'Home',to:'/',Icon:HomeIcon},{label:'Bible',to:'/bible',Icon:BookOpen},
-      {label:'Worship',to:'/worship',Icon:Music2},{label:'Community',to:'/community',Icon:Users},
+      {label:'Worship',to:'/worship',Icon:Music2},{label:'Live',to:'/live',Icon:Radio},
       {label:'Profile',to:'/profile',Icon:User}
     ].map(({label,to,Icon}) => {const active=to==='/'?location.pathname==='/':(to==='/bible'?(location.pathname==='/bible'||location.pathname.startsWith('/bible')):location.pathname.startsWith(to));return <Link key={to} to={to} aria-current={active?'page':undefined} className={active?'active':''}><span><Icon size={22} strokeWidth={active?2:1.6}/></span><small>{label}</small></Link>;})}</nav>
   </div>;
@@ -327,11 +329,7 @@ function PageNotFound() {
   return <PageTitle tag="PAGE NOT FOUND" title="A new direction" text="This page could not be found."><Link to="/" className="btn navy">Return home</Link></PageTitle>;
 }
 
-const defaultAnnouncements = [
-  { id: '1', ministry: 'Anointing Ministries', avatar: 'anointing-logo', image: 'church-worship', title: 'Sunday Worship Service', content: 'Join us this Sunday at Madukkarai Church Sanctuary for powerful worship, Word, and fellowship with Pastor David Samson and Rev. Dr. Samson Edward. Come expectant!', timestamp: '2 hours ago', expiresAt: Date.now() + 7 * 86400000, likesCount: 142, liked: false, notified: false, comments: [{ id: 'c1', name: 'Grace Mary', text: 'Praise God! Looking forward to fellowship.' }, { id: 'c2', name: 'Samuel Raj', text: 'Amen! See you all there.' }] },
-  { id: '2', ministry: 'Youth & Young Adults', avatar: 'anointing-logo', image: 'christmas-community', title: 'Youth Night & Praise', content: 'An evening of acoustic worship, testimonies, and deep fellowship in the Word. Bring a friend!', timestamp: 'Yesterday', expiresAt: Date.now() + 7 * 86400000, likesCount: 98, liked: true, notified: true, comments: [{ id: 'c3', name: 'Blessy', text: 'Cant wait for this!' }] },
-  { id: '3', ministry: 'Community Outreach', avatar: 'anointing-logo', image: 'community', title: 'Charity Drive & Prayer Walk', content: 'Reaching out to our local neighborhood with love, prayer, and support. Volunteers welcome.', timestamp: '3 days ago', expiresAt: Date.now() + 7 * 86400000, likesCount: 215, liked: false, notified: false, comments: [] }
-];
+const defaultAnnouncements: any[] = [];
 
 function Announcements() {
   useTitle('Announcements — Anointing Ministries');
@@ -406,6 +404,21 @@ function Announcements() {
             </div>
           </div>
         </div>
+
+        {/* Visitor Canva Link Banner */}
+        <a 
+          href="https://canva.link/j2vpxfi4m62ulqy" 
+          target="_blank" 
+          rel="noopener noreferrer"
+          className="block bg-gradient-to-r from-amber-700 to-amber-900 text-white p-4 rounded-xl shadow-md hover:from-amber-800 hover:to-amber-950 transition flex items-center justify-between"
+        >
+          <div>
+            <span className="bg-white/20 text-white text-[10px] font-bold px-2 py-0.5 rounded uppercase tracking-wider">Visitor Welcome</span>
+            <h2 className="font-serif text-base font-bold mt-1">Anointing Ministries Visitor Guide ↗</h2>
+            <p className="text-xs text-amber-100 mt-0.5">Tap to open our visitor welcome card on Canva (https://canva.link/j2vpxfi4m62ulqy).</p>
+          </div>
+          <ExternalLink size={22} className="text-amber-200 shrink-0 ml-3" />
+        </a>
 
         {/* Feed */}
         <div className="space-y-6">
@@ -591,6 +604,10 @@ function Admin() {
 
   // Prayer requests admin state
   const [prayerRequests, setPrayerRequests] = useState<any[]>([]);
+  const [activeMembers, setActiveMembers] = useState<any[]>([]);
+  const [editingPostId, setEditingPostId] = useState<string | null>(null);
+  const [editTitle, setEditTitle] = useState('');
+  const [editContent, setEditContent] = useState('');
 
   useEffect(() => {
     if (!db) return;
@@ -599,7 +616,15 @@ function Admin() {
       items.sort((a: any, b: any) => (b.createdAt || 0) - (a.createdAt || 0));
       setPrayerRequests(items);
     }, () => {});
-    return () => unsubPrayers();
+
+    const unsubActivity = onSnapshot(collection(db, 'member_activity'), (snap: any) => {
+      setActiveMembers(snap.docs.map((d: any) => ({ id: d.id, ...d.data() })));
+    }, () => {});
+
+    return () => {
+      unsubPrayers();
+      unsubActivity();
+    };
   }, []);
 
   const sendAdminPush = async (e: React.FormEvent) => {
@@ -1061,15 +1086,27 @@ function Admin() {
           </div>
 
           <div className="border-t pt-4">
-            <h4 className="text-xs font-bold uppercase tracking-wider text-neutral-700 mb-2">Registered Church Members Directory ({membersDatabase.length})</h4>
-            <p className="text-xs text-neutral-500 mb-3">Members can log in optionally using their Full Name & Date of Birth.</p>
+            <div className="flex items-center justify-between mb-2">
+              <h4 className="text-xs font-bold uppercase tracking-wider text-neutral-700">Live Active Member Logins ({activeMembers.length} active sessions)</h4>
+              <span className="text-[10px] bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded font-bold animate-pulse">LIVE TRACKING</span>
+            </div>
+            <p className="text-xs text-neutral-500 mb-3">Members who have logged in with their ID to the platform.</p>
             <div className="max-h-60 overflow-y-auto border border-neutral-200 rounded-xl divide-y">
-              {membersDatabase.map((m, idx) => (
+              {activeMembers.length > 0 ? activeMembers.map((m: any, idx: number) => (
                 <div key={idx} className="px-4 py-2.5 flex items-center justify-between text-xs hover:bg-neutral-50">
-                  <span className="font-semibold text-neutral-900">{idx + 1}. {m.name}</span>
-                  <span className="text-neutral-500">DOB: {m.dob}</span>
+                  <div className="flex items-center gap-2">
+                    <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
+                    <span className="font-semibold text-neutral-900">{m.name}</span>
+                  </div>
+                  <span className="text-neutral-500 text-[11px]">
+                    Logged in: {m.loginTime ? new Date(m.loginTime).toLocaleTimeString() : 'Recent'}
+                  </span>
                 </div>
-              ))}
+              )) : (
+                <div className="text-center py-6 text-neutral-400 text-xs">
+                  No active member login sessions recorded yet.
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -1077,20 +1114,47 @@ function Admin() {
 
       <aside>
         <Tag>MANAGED POSTS</Tag>
-        <h3>{list.length} Posts</h3>
+        <h3>{list.length} Posts (Editable & Deletable)</h3>
         <p className="small muted">Posts automatically expire after their scheduled duration.</p>
         <div style={{display:'flex',flexDirection:'column',gap:'12px',marginTop:'20px'}}>
           {list.map((a: any) => (
             <div key={a.id} className="form-card" style={{padding:'15px'}}>
-              <h4>{a.title}</h4>
-              <p className="small">{a.ministry} · Expires: {a.expiresAt ? new Date(a.expiresAt).toLocaleDateString() : 'No expiry'}</p>
-              <button className="text-link" style={{color:'#e53e3e',marginTop:'8px'}} onClick={async () => {
-                try {
-                  await deleteDoc(doc(db, 'announcements', a.id));
-                } catch {}
-                setList(l => l.filter((x: any) => x.id !== a.id));
-                notify('Post removed');
-              }}>Delete post</button>
+              {editingPostId === a.id ? (
+                <div className="space-y-2">
+                  <input value={editTitle} onChange={e => setEditTitle(e.target.value)} placeholder="Edit title" className="w-full border p-1 text-xs rounded"/>
+                  <textarea value={editContent} onChange={e => setEditContent(e.target.value)} placeholder="Edit content" className="w-full border p-1 text-xs rounded" rows={3}/>
+                  <div className="flex gap-2">
+                    <button className="btn gold text-xs py-1 px-3" onClick={async () => {
+                      try {
+                        const updated = { ...a, title: editTitle, content: editContent, updatedAt: Date.now() };
+                        await setDoc(doc(db, 'announcements', a.id), updated, { merge: true });
+                        setList(l => l.map((x: any) => x.id === a.id ? updated : x));
+                        setEditingPostId(null);
+                        notify('Post updated successfully');
+                      } catch {
+                        setEditingPostId(null);
+                      }
+                    }}>Save</button>
+                    <button className="btn outline text-xs py-1 px-3" onClick={() => setEditingPostId(null)}>Cancel</button>
+                  </div>
+                </div>
+              ) : (
+                <>
+                  <h4>{a.title}</h4>
+                  <p className="small">{a.ministry} · Expires: {a.expiresAt ? new Date(a.expiresAt).toLocaleDateString() : 'No expiry'}</p>
+                  <p className="text-xs text-neutral-600 mt-1 line-clamp-2">{a.content}</p>
+                  <div className="flex gap-3 mt-2">
+                    <button className="text-link text-xs text-amber-800 font-bold" onClick={() => { setEditingPostId(a.id); setEditTitle(a.title); setEditContent(a.content); }}>Edit post</button>
+                    <button className="text-link text-xs" style={{color:'#e53e3e'}} onClick={async () => {
+                      try {
+                        await deleteDoc(doc(db, 'announcements', a.id));
+                      } catch {}
+                      setList(l => l.filter((x: any) => x.id !== a.id));
+                      notify('Post removed');
+                    }}>Delete post</button>
+                  </div>
+                </>
+              )}
             </div>
           ))}
         </div>
@@ -1743,7 +1807,7 @@ function Contact() {
           <p><Mail size={20}/><span>Get in touch<small>{config.email || 'Verified email and phone to be provided'}</small></span></p>
           <p><Clock size={20}/><span>Service timings<small>{config.nextServiceISO || 'Service schedule to be confirmed'}</small></span></p>
         </div>
-        {config.mapEmbedUrl ? <iframe title="Church location map" src={config.mapEmbedUrl}/> : <div className="map-placeholder"><MapPin size={30}/><p>Madukkarai, Coimbatore</p><a className="text-link" href={config.googleUrl} target="_blank" rel="noopener noreferrer" aria-label="Open shared Google location (opens in new window)">Open shared Google location <ArrowUpRight size={15}/></a></div>}
+        <iframe title="Anointing Ministries Church Location" src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3917.743643688904!2d76.9432104!3d10.907076999999997!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3ba85b14bd4b16c1%3A0x1eace48f5414ba03!2sAnointing%20Ministries%20Church!5e0!3m2!1sen!2sin!4v1792589778515!5m2!1sen!2sin" width="600" height="450" style={{border:0}} allowFullScreen loading="lazy" referrerPolicy="strict-origin-when-cross-origin"></iframe>
         <p className="small muted">Connect with us through our ministry channels below.</p>
         <SocialLinks/>
       </aside>

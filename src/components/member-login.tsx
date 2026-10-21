@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { User, LogIn, LogOut, Check, X, Shield, Bell } from 'lucide-react';
 import { membersDatabase, type Member } from '../members';
+import { db } from '../lib/firebase';
+import { doc, setDoc } from 'firebase/firestore';
 
 export function useMemberAuth() {
   const [currentUser, setCurrentUser] = useState<Member | null>(null);
@@ -54,6 +56,14 @@ export function useMemberAuth() {
       try {
         localStorage.setItem('am-logged-member', JSON.stringify(found));
         window.dispatchEvent(new Event('am-member-changed'));
+        if (db) {
+          setDoc(doc(db, 'member_activity', found.name.replace(/\s+/g, '_')), {
+            name: found.name,
+            dob: found.dob,
+            loginTime: Date.now(),
+            active: true
+          }).catch(() => {});
+        }
       } catch {}
       return { success: true, member: found };
     }
