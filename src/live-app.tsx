@@ -52,9 +52,9 @@ export function LiveStatus({ compact = false }: { compact?: boolean }) {
             setPlayMode('channel_live');
           }
         }
-      }, () => {});
+      }, () => { });
       return () => unsub();
-    } catch {}
+    } catch { }
   }, []);
 
   // 2. Poll API endpoint safely
@@ -153,9 +153,12 @@ export function LiveStatus({ compact = false }: { compact?: boolean }) {
   }
 
   // Determine current iframe embed URL
+  const UPLOADS_PLAYLIST = 'UUVlqXBkmLozubnyVjUeD5Zw';
   const embedUrl = playMode === 'channel_live'
     ? `https://www.youtube.com/embed/live_stream?channel=${CHANNEL_ID}&autoplay=1`
-    : `https://www.youtube.com/embed/${activeVideoId}?autoplay=1&rel=0`;
+    : (activeVideoId && activeVideoId !== 'tKIroxrTbG8'
+      ? `https://www.youtube.com/embed/${activeVideoId}?autoplay=1&rel=0`
+      : `https://www.youtube.com/embed/videoseries?list=${UPLOADS_PLAYLIST}&autoplay=1&rel=0`);
 
   // Full Mode (for /live)
   return (
@@ -176,7 +179,7 @@ export function LiveStatus({ compact = false }: { compact?: boolean }) {
             {isLive ? state.title : (playMode === 'channel_live' ? 'YouTube Live Stream Feed' : state.title)}
           </b>
         </div>
-        
+
         <div className="flex items-center gap-2">
           <button
             className="icon-btn"
@@ -200,11 +203,10 @@ export function LiveStatus({ compact = false }: { compact?: boolean }) {
       <div className="flex items-center gap-2 mb-3 flex-wrap text-xs">
         <button
           onClick={() => setPlayMode('channel_live')}
-          className={`px-3 py-1.5 rounded-md font-semibold transition-colors flex items-center gap-1.5 ${
-            playMode === 'channel_live'
+          className={`px-3 py-1.5 rounded-md font-semibold transition-colors flex items-center gap-1.5 ${playMode === 'channel_live'
               ? 'bg-red-600 text-white shadow-sm'
               : 'bg-white border border-neutral-300 text-neutral-700 hover:bg-neutral-50'
-          }`}
+            }`}
         >
           <span className="h-2 w-2 rounded-full bg-red-400 animate-pulse inline-block" />
           YouTube Live Channel Feed
@@ -215,11 +217,10 @@ export function LiveStatus({ compact = false }: { compact?: boolean }) {
             setPlayMode('recorded');
             setSelectedVideo('tKIroxrTbG8');
           }}
-          className={`px-3 py-1.5 rounded-md font-semibold transition-colors flex items-center gap-1.5 ${
-            playMode === 'recorded' && activeVideoId === 'tKIroxrTbG8'
+          className={`px-3 py-1.5 rounded-md font-semibold transition-colors flex items-center gap-1.5 ${playMode === 'recorded' && activeVideoId === 'tKIroxrTbG8'
               ? 'bg-amber-700 text-white shadow-sm'
               : 'bg-white border border-neutral-300 text-neutral-700 hover:bg-neutral-50'
-          }`}
+            }`}
         >
           <Play size={13} fill="currentColor" /> Latest Sunday Service
         </button>
@@ -248,13 +249,13 @@ export function LiveStatus({ compact = false }: { compact?: boolean }) {
 
       <div className="text-[11px] text-neutral-500 flex items-center justify-between gap-2 flex-wrap mb-2">
         <span>If playback doesn't start automatically, tap the play button in the player or open directly in YouTube.</span>
-        <a 
-          href="https://www.youtube.com/@AnointingMinistries/live" 
-          target="_blank" 
+        <a
+          href="https://www.youtube.com/@AnointingMinistries/live"
+          target="_blank"
           rel="noopener noreferrer"
           className="text-amber-800 font-medium hover:underline flex items-center gap-1"
         >
-          Watch on @AnointingMinistries YouTube Live <ExternalLink size={12}/>
+          Watch on @AnointingMinistries YouTube Live <ExternalLink size={12} />
         </a>
       </div>
 
@@ -321,11 +322,10 @@ export function LiveStatus({ compact = false }: { compact?: boolean }) {
                 setSelectedVideo(b.id);
                 setPlayMode('recorded');
               }}
-              className={`text-left p-3 rounded border transition-all text-xs flex flex-col justify-between ${
-                playMode === 'recorded' && activeVideoId === b.id
+              className={`text-left p-3 rounded border transition-all text-xs flex flex-col justify-between ${playMode === 'recorded' && activeVideoId === b.id
                   ? 'border-amber-600 bg-amber-50 shadow-sm font-semibold'
                   : 'border-neutral-200 bg-white hover:border-neutral-400'
-              }`}
+                }`}
             >
               <div className="flex items-center justify-between gap-1 mb-1">
                 <span className="text-[10px] uppercase font-bold text-amber-700 bg-amber-100 px-1.5 py-0.5 rounded">
@@ -366,9 +366,9 @@ function LivePrayerBox() {
       const q = query(collection(db, 'live_prayers'), orderBy('createdAt', 'desc'), limit(5));
       const unsub = onSnapshot(q, (snap) => {
         setPrayers(snap.docs.map(d => ({ id: d.id, ...d.data() })));
-      }, () => {});
+      }, () => { });
       return () => unsub();
-    } catch {}
+    } catch { }
   }, []);
 
   const submit = async (e: React.FormEvent) => {
@@ -496,7 +496,7 @@ export function AppInstall() {
   const [event, setEvent] = useState<any>(null), [msg, setMsg] = useState(''), [installed, setInstalled] = useState(false);
   useEffect(() => {
     setInstalled(window.matchMedia('(display-mode: standalone)').matches);
-    if ('serviceWorker' in navigator) navigator.serviceWorker.register('/sw.js').catch(() => {});
+    if ('serviceWorker' in navigator) navigator.serviceWorker.register('/sw.js').catch(() => { });
     const f = (e: Event) => { e.preventDefault(); setEvent(e); };
     const done = () => { setInstalled(true); setEvent(null); };
     window.addEventListener('beforeinstallprompt', f);
@@ -525,7 +525,7 @@ export function AppInstall() {
           } else {
             setMsg('Use your browser’s “Add to Home Screen” or install icon in the address bar.');
           }
-        }}><Download size={17}/> Install App</button>
+        }}><Download size={17} /> Install App</button>
         {msg && <p className="small muted install-help">{msg}</p>}
       </div>
     </div>
@@ -554,14 +554,14 @@ export function ChurchGallery() {
 
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
         {photos.map((p, idx) => (
-          <div 
+          <div
             key={p.name}
             onClick={() => setSelectedPhoto(p)}
             className="group relative aspect-video sm:aspect-square overflow-hidden rounded-lg cursor-pointer bg-neutral-900 shadow-sm"
           >
-            <img 
-              src={`/images/${p.name}.jpg`} 
-              alt={p.title} 
+            <img
+              src={`/images/${p.name}.jpg`}
+              alt={p.title}
               className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent flex flex-col justify-end p-4 text-white">
@@ -578,9 +578,9 @@ export function ChurchGallery() {
             <button className="icon-btn absolute top-3 right-3 text-white" onClick={() => setSelectedPhoto(null)}>
               <X size={20} />
             </button>
-            <img 
-              src={`/images/${selectedPhoto.name}.jpg`} 
-              alt={selectedPhoto.title} 
+            <img
+              src={`/images/${selectedPhoto.name}.jpg`}
+              alt={selectedPhoto.title}
               className="w-full max-h-[70vh] object-contain rounded mb-3"
             />
             <h3 className="font-serif text-xl">{selectedPhoto.title}</h3>

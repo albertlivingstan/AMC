@@ -1,8 +1,8 @@
-import {QuickAccess,CommunityInvite,WorshipPreview,BibleLanding,CommunityOverview,MemberProfile} from './components/reference-ui';
-import {DailyVerse,BibleReader} from './bible';
-import {PastorSongs} from './songs';
-import {AppInstall,LiveStatus,LivePage,ChurchGallery} from './live-app';
-import {ProStudio,ProAudience} from './presentation';
+import { QuickAccess, CommunityInvite, WorshipPreview, BibleLanding, CommunityOverview, MemberProfile } from './components/reference-ui';
+import { DailyVerse, BibleReader } from './bible';
+import { PastorSongs } from './songs';
+import { AppInstall, LiveStatus, LivePage, ChurchGallery } from './live-app';
+import { ProStudio, ProAudience } from './presentation';
 import React, { useEffect, useState, useRef, createContext, useContext } from 'react';
 import { BrowserRouter, Routes, Route, Link, useLocation, useParams } from 'react-router-dom';
 import { motion, MotionConfig, AnimatePresence } from 'framer-motion';
@@ -11,7 +11,7 @@ import './style.css';
 import './mobile-reference.css';
 import { initialSongs, verses, sermons, type Song } from './content';
 import { config } from './config';
-import {Brand,SocialLinks,MinistryArchive,CommunityConnect,MotionEnhancements,LightAtmosphere} from './ministry';
+import { Brand, SocialLinks, MinistryArchive, CommunityConnect, MotionEnhancements, LightAtmosphere } from './ministry';
 import { db } from './lib/firebase';
 import { collection, getDocs, addDoc, deleteDoc, doc, setDoc, onSnapshot, query, orderBy } from 'firebase/firestore';
 import { NotificationBellWithModal } from './components/notifications-manager';
@@ -33,12 +33,12 @@ function useStored<T>(key: string, initial: T) {
       if (item !== null) {
         set(JSON.parse(item));
       }
-    } catch {}
+    } catch { }
   }, [key]);
   useEffect(() => {
     try {
       localStorage.setItem(key, JSON.stringify(v));
-    } catch {}
+    } catch { }
   }, [v, key]);
   return [v, set] as const;
 }
@@ -47,7 +47,7 @@ const Ctx = createContext<any>(null);
 const useApp = () => useContext(Ctx);
 const Img = ({ name = 'church', ...props }: any) => {
   const src = name.startsWith('http') || name.startsWith('/') ? name : '/images/' + name + '.jpg';
-  return <img src={src} {...props}/>;
+  return <img src={src} {...props} />;
 };
 function IconButton({ label, children, ...props }: any) { return <button className="icon-btn" aria-label={label} title={label} {...props}>{children}</button>; }
 function Tag({ children }: any) { return <span className="eyebrow">{children}</span>; }
@@ -82,7 +82,7 @@ function playNotificationChime() {
     osc2.start(now);
     osc1.stop(now + 0.85);
     osc2.stop(now + 0.85);
-  } catch {}
+  } catch { }
 }
 
 export function App() {
@@ -114,12 +114,12 @@ export function App() {
           return Array.from(map.values());
         });
       }
-    }, () => {});
+    }, () => { });
 
     const unsubAlerts = onSnapshot(collection(db, 'alerts'), (snapshot: any) => {
       const activeAlerts = snapshot.docs.map((doc: any) => ({ id: doc.id, ...doc.data() })).filter((a: any) => a.active);
       setAlerts(activeAlerts);
-      
+
       if (activeAlerts.length > 0) {
         const key = `${activeAlerts[0].id}-${activeAlerts[0].message}-${activeAlerts[0].updatedAt || activeAlerts[0].createdAt || ''}`;
         if (!initialMount.current && lastAlertKey.current && lastAlertKey.current !== key) {
@@ -133,12 +133,12 @@ export function App() {
                 icon: '/images/anointing-logo.jpg',
                 tag: 'church-alert'
               });
-            } catch {}
+            } catch { }
           }
         }
         lastAlertKey.current = key;
       }
-    }, () => {});
+    }, () => { });
 
     const unsubLive = onSnapshot(doc(db, 'settings', 'live_broadcast'), (snap: any) => {
       if (snap.exists()) {
@@ -154,12 +154,12 @@ export function App() {
                 icon: '/images/anointing-logo.jpg',
                 tag: 'church-live'
               });
-            } catch {}
+            } catch { }
           }
         }
         lastLiveStatus.current = !!data.isLive;
       }
-    }, () => {});
+    }, () => { });
 
     const timer = setTimeout(() => { initialMount.current = false; }, 2500);
 
@@ -212,12 +212,12 @@ export function App() {
   return <Ctx.Provider value={{ songs, setSongs, current, setCurrent, favs, toggle, recent, play, notify, setModal, alerts, alertDismissed, setAlertDismissed, liveInfo, alertsModal, setAlertsModal }}>
     <MotionConfig reducedMotion="user">
       <Routes>
-        <Route path="/worship/presentation" element={<ProStudio />}/>
-        <Route path="/worship/display" element={<ProAudience />}/>
-        <Route path="*" element={<Shell />}/>
+        <Route path="/worship/presentation" element={<ProStudio />} />
+        <Route path="/worship/display" element={<ProAudience />} />
+        <Route path="*" element={<Shell />} />
       </Routes>
       <AnimatePresence>{current && <Player />}</AnimatePresence>
-      {toast && <div className="toast" role="status"><Check size={17}/>{toast}</div>}
+      {toast && <div className="toast" role="status"><Check size={17} />{toast}</div>}
       <AnimatePresence>
         {modal && <div className="modal-shade" onClick={() => setModal(null)}>
           <motion.section initial={{ scale: 0.9, opacity: 0, y: 20 }} animate={{ scale: 1, opacity: 1, y: 0 }} exit={{ scale: 0.9, opacity: 0, y: 20 }} transition={{ duration: 0.25 }} className="modal" role="dialog" aria-modal="true" aria-label={modal.title} onClick={e => e.stopPropagation()}>
@@ -244,10 +244,10 @@ function Shell() {
   const menuRef = useRef<HTMLElement>(null);
   const toggleRef = useRef<HTMLButtonElement>(null);
   const links = [
-    ['Home','/'], ['Bible','/bible'], ['Worship','/worship'], ['Live worship','/live'],
-    ['Community','/community'], ['Announcements','/announcements'], ['Prayer','/prayer'],
-    ['Sermons','/sermons'], ['About','/about'], ['Contact','/contact'], ['Profile','/profile'],
-    ['Presentation studio','/worship/presentation'], ['Admin portal','/admin']
+    ['Home', '/'], ['Bible', '/bible'], ['Worship', '/worship'], ['Live worship', '/live'],
+    ['Community', '/community'], ['Announcements', '/announcements'], ['Prayer', '/prayer'],
+    ['Sermons', '/sermons'], ['About', '/about'], ['Contact', '/contact'], ['Profile', '/profile'],
+    ['Presentation studio', '/worship/presentation'], ['Admin portal', '/admin']
   ];
   useEffect(() => {
     setMenu(false);
@@ -275,52 +275,52 @@ function Shell() {
   }, [menu]);
   return <div className={`reference-shell ${isDark ? 'dark-theme' : ''}`} data-theme={theme}>
     <a className="skip" href="#main">Skip to content</a>
-    {alerts.length > 0 && !alertDismissed && <div className="ref-alert" role="status"><AlertCircle size={16}/><p>{alerts[0].message}</p><button onClick={() => setAlertDismissed(true)} aria-label="Dismiss church alert"><X size={18}/></button></div>}
+    {alerts.length > 0 && !alertDismissed && <div className="ref-alert" role="status"><AlertCircle size={16} /><p>{alerts[0].message}</p><button onClick={() => setAlertDismissed(true)} aria-label="Dismiss church alert"><X size={18} /></button></div>}
     <header className="ref-header">
-      <button className="ref-menu-toggle" ref={toggleRef} onClick={() => setMenu(true)} aria-expanded={menu} aria-controls="ministry-menu" aria-label="Open ministry menu"><Menu size={23}/></button>
-      <Brand/>
-      <nav className="ref-desktop-nav" aria-label="Main navigation">{[['Home','/'],['Bible','/bible'],['Worship','/worship'],['Community','/community'],['About','/about']].map(([label,to]) => <Link key={to} to={to} aria-current={location.pathname === to ? 'page' : undefined}>{label}</Link>)}</nav>
+      <button className="ref-menu-toggle" ref={toggleRef} onClick={() => setMenu(true)} aria-expanded={menu} aria-controls="ministry-menu" aria-label="Open ministry menu"><Menu size={23} /></button>
+      <Brand />
+      <nav className="ref-desktop-nav" aria-label="Main navigation">{[['Home', '/'], ['Bible', '/bible'], ['Worship', '/worship'], ['Community', '/community'], ['About', '/about']].map(([label, to]) => <Link key={to} to={to} aria-current={location.pathname === to ? 'page' : undefined}>{label}</Link>)}</nav>
       <div className="ref-header-actions">
-        <Link className="ref-header-profile" to="/profile"><User size={17}/>{currentUser ? 'My profile' : 'Member sign in'}</Link>
-        <Link className="ref-header-live" to="/live"><Play size={13} fill="currentColor"/>Watch worship</Link>
-        <button 
+        <Link className="ref-header-profile" to="/profile"><User size={17} />{currentUser ? 'My profile' : 'Member sign in'}</Link>
+        <Link className="ref-header-live" to="/live"><Play size={13} fill="currentColor" />Watch worship</Link>
+        <button
           type="button"
-          className="ref-theme-toggle" 
-          onClick={toggleTheme} 
-          aria-label={isDark ? 'Switch to light mode' : 'Switch to dark mode'} 
+          className="ref-theme-toggle"
+          onClick={toggleTheme}
+          aria-label={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
           title={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
         >
-          {isDark ? <Sun size={19}/> : <Moon size={19}/>}
+          {isDark ? <Sun size={19} /> : <Moon size={19} />}
         </button>
         <button className="ref-bell" onClick={() => setAlertsModal(true)} aria-label="Open notifications">
-          <Bell size={24}/>
-          {(alerts.length > 0 || liveInfo?.isLive) && <span/>}
+          <Bell size={24} />
+          {(alerts.length > 0 || liveInfo?.isLive) && <span />}
         </button>
       </div>
     </header>
-    <AnimatePresence>{menu && <div className="ref-drawer-layer"><button className="ref-drawer-backdrop" onClick={() => setMenu(false)} aria-label="Close ministry menu backdrop" tabIndex={-1}/><motion.aside className="ref-drawer" id="ministry-menu" role="dialog" aria-modal="true" aria-labelledby="ministry-menu-title" ref={menuRef} initial={{x:'-100%'}} animate={{x:0}} exit={{x:'-100%'}} transition={{duration:.24}}><div className="ref-drawer-heading"><h2 id="ministry-menu-title">Welcome home.</h2><button onClick={() => setMenu(false)} aria-label="Close ministry menu"><X size={22}/></button></div><p>A place to belong. A faith to live.</p><nav aria-label="All ministry pages">{links.map(([label,to]) => <Link to={to} key={to} onClick={() => setMenu(false)} aria-current={location.pathname === to ? 'page' : undefined}>{label}<ChevronRight size={16}/></Link>)}</nav><div className="ref-drawer-theme"><button type="button" onClick={toggleTheme} className="ref-theme-pill" aria-label={isDark ? 'Switch to light mode' : 'Switch to dark mode'}>{isDark ? <Sun size={18}/> : <Moon size={18}/>}<span>{isDark ? 'Switch to Light mode' : 'Switch to Dark mode'}</span><span className="ref-theme-tag">{isDark ? 'Dark' : 'Light'}</span></button></div><SocialLinks/></motion.aside></div>}</AnimatePresence>
-    {alertsModal && <NotificationBellWithModal isOpen onClose={() => setAlertsModal(false)}/>}
-    {loginModal && <MemberLoginModal isOpen onClose={() => setLoginModal(false)}/>}
-    <MotionEnhancements/>
+    <AnimatePresence>{menu && <div className="ref-drawer-layer"><button className="ref-drawer-backdrop" onClick={() => setMenu(false)} aria-label="Close ministry menu backdrop" tabIndex={-1} /><motion.aside className="ref-drawer" id="ministry-menu" role="dialog" aria-modal="true" aria-labelledby="ministry-menu-title" ref={menuRef} initial={{ x: '-100%' }} animate={{ x: 0 }} exit={{ x: '-100%' }} transition={{ duration: .24 }}><div className="ref-drawer-heading"><h2 id="ministry-menu-title">Welcome home.</h2><button onClick={() => setMenu(false)} aria-label="Close ministry menu"><X size={22} /></button></div><p>A place to belong. A faith to live.</p><nav aria-label="All ministry pages">{links.map(([label, to]) => <Link to={to} key={to} onClick={() => setMenu(false)} aria-current={location.pathname === to ? 'page' : undefined}>{label}<ChevronRight size={16} /></Link>)}</nav><div className="ref-drawer-theme"><button type="button" onClick={toggleTheme} className="ref-theme-pill" aria-label={isDark ? 'Switch to light mode' : 'Switch to dark mode'}>{isDark ? <Sun size={18} /> : <Moon size={18} />}<span>{isDark ? 'Switch to Light mode' : 'Switch to Dark mode'}</span><span className="ref-theme-tag">{isDark ? 'Dark' : 'Light'}</span></button></div><SocialLinks /></motion.aside></div>}</AnimatePresence>
+    {alertsModal && <NotificationBellWithModal isOpen onClose={() => setAlertsModal(false)} />}
+    {loginModal && <MemberLoginModal isOpen onClose={() => setLoginModal(false)} />}
+    <MotionEnhancements />
     <main id="main"><Routes>
-      <Route path="/" element={<Home/>}/><Route path="/worship" element={<Worship/>}/>
-      <Route path="/sermons" element={<Sermons/>}/><Route path="/sermons/:id" element={<SermonDetail/>}/>
-      <Route path="/announcements" element={<Announcements/>}/><Route path="/admin" element={<Admin/>}/>
-      <Route path="/bible" element={<BibleReader/>}/>
-      <Route path="/bible/read" element={<BibleReader/>}/>
-      <Route path="/bible/overview" element={<BibleLanding isLive={liveInfo?.isLive} liveTitle={liveInfo?.title}/>}/>
-      <Route path="/live" element={<LivePage/>}/>
-      <Route path="/community" element={<CommunityOverview alerts={alerts}/>}/>
-      <Route path="/profile" element={<MemberProfile member={currentUser} onLogin={() => setLoginModal(true)} onLogout={logout} onNotifications={() => setAlertsModal(true)}/>}/>
-      <Route path="/about" element={<About/>}/><Route path="/prayer" element={<Prayer/>}/><Route path="/contact" element={<Contact/>}/>
-      <Route path="*" element={<PageNotFound/>}/>
+      <Route path="/" element={<Home />} /><Route path="/worship" element={<Worship />} />
+      <Route path="/sermons" element={<Sermons />} /><Route path="/sermons/:id" element={<SermonDetail />} />
+      <Route path="/announcements" element={<Announcements />} /><Route path="/admin" element={<Admin />} />
+      <Route path="/bible" element={<BibleReader />} />
+      <Route path="/bible/read" element={<BibleReader />} />
+      <Route path="/bible/overview" element={<BibleLanding isLive={liveInfo?.isLive} liveTitle={liveInfo?.title} />} />
+      <Route path="/live" element={<LivePage />} />
+      <Route path="/community" element={<CommunityOverview alerts={alerts} />} />
+      <Route path="/profile" element={<MemberProfile member={currentUser} onLogin={() => setLoginModal(true)} onLogout={logout} onNotifications={() => setAlertsModal(true)} />} />
+      <Route path="/about" element={<About />} /><Route path="/prayer" element={<Prayer />} /><Route path="/contact" element={<Contact />} />
+      <Route path="*" element={<PageNotFound />} />
     </Routes></main>
-    <Footer/>
+    <Footer />
     <nav className="ref-bottom-nav" aria-label="Mobile navigation">{[
-      {label:'Home',to:'/',Icon:HomeIcon},{label:'Bible',to:'/bible',Icon:BookOpen},
-      {label:'Worship',to:'/worship',Icon:Music2},{label:'Community',to:'/community',Icon:Users},
-      {label:'Profile',to:'/profile',Icon:User}
-    ].map(({label,to,Icon}) => {const active=to==='/'?location.pathname==='/':(to==='/bible'?(location.pathname==='/bible'||location.pathname.startsWith('/bible')):location.pathname.startsWith(to));return <Link key={to} to={to} aria-current={active?'page':undefined} className={active?'active':''}><span><Icon size={22} strokeWidth={active?2:1.6}/></span><small>{label}</small></Link>;})}</nav>
+      { label: 'Home', to: '/', Icon: HomeIcon }, { label: 'Bible', to: '/bible', Icon: BookOpen },
+      { label: 'Worship', to: '/worship', Icon: Music2 }, { label: 'Community', to: '/community', Icon: Users },
+      { label: 'Profile', to: '/profile', Icon: User }
+    ].map(({ label, to, Icon }) => { const active = to === '/' ? location.pathname === '/' : (to === '/bible' ? (location.pathname === '/bible' || location.pathname.startsWith('/bible')) : location.pathname.startsWith(to)); return <Link key={to} to={to} aria-current={active ? 'page' : undefined} className={active ? 'active' : ''}><span><Icon size={22} strokeWidth={active ? 2 : 1.6} /></span><small>{label}</small></Link>; })}</nav>
   </div>;
 }
 
@@ -353,7 +353,7 @@ function Announcements() {
       if (valid.length > 0) {
         setPosts(valid);
       }
-    }, () => {});
+    }, () => { });
     return () => unsub();
   }, []);
 
@@ -390,9 +390,9 @@ function Announcements() {
 
   return (
     <div className="min-h-screen bg-slate-50 py-10 px-4">
-      <motion.div 
-        initial={{ opacity: 0, y: 15 }} 
-        animate={{ opacity: 1, y: 0 }} 
+      <motion.div
+        initial={{ opacity: 0, y: 15 }}
+        animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
         className="max-w-[600px] mx-auto space-y-6"
       >
@@ -402,17 +402,31 @@ function Announcements() {
           <div className="flex items-center gap-3">
             <div className="relative">
               <button aria-label="Notifications" className="p-2 rounded-full hover:bg-slate-100 transition">
-                <Bell size={20} className="text-slate-700"/>
+                <Bell size={20} className="text-slate-700" />
               </button>
               <span className="absolute top-1 right-1 w-2 h-2 bg-amber-600 rounded-full"></span>
             </div>
           </div>
         </div>
 
+        {/* Anointing Ministries Announcement Banner */}
+        <a
+          href="https://canva.link/j2vpxfi4m62ulqy"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="block bg-gradient-to-r from-amber-700 to-amber-900 text-white p-4 rounded-xl shadow-md hover:from-amber-800 hover:to-amber-950 transition flex items-center justify-between"
+        >
+          <div>
+            <span className="bg-white/20 text-white text-[10px] font-bold px-2 py-0.5 rounded uppercase tracking-wider">Announcement</span>
+            <h2 className="font-serif text-base font-bold mt-1">Anointing Ministries Announcement ↗</h2>
+            <p className="text-xs text-amber-100 mt-0.5">Tap to view official church announcement & details (https://canva.link/j2vpxfi4m62ulqy).</p>
+          </div>
+          <ExternalLink size={22} className="text-amber-200 shrink-0 ml-3" />
+        </a>
         {/* Feed */}
         <div className="space-y-6">
           {activePosts.map((post, idx) => (
-            <motion.article 
+            <motion.article
               key={post.id}
               initial={{ opacity: 0, y: 25 }}
               animate={{ opacity: 1, y: 0 }}
@@ -423,7 +437,7 @@ function Announcements() {
               <div className="flex items-center justify-between px-4 py-3">
                 <div className="flex items-center gap-3">
                   <div className="w-9 h-9 rounded-full overflow-hidden border border-amber-500/30 p-0.5 bg-amber-50">
-                    <img src="/images/anointing-logo.jpg" alt="Ministry Logo" className="w-full h-full object-cover rounded-full"/>
+                    <img src="/images/anointing-logo.jpg" alt="Ministry Logo" className="w-full h-full object-cover rounded-full" />
                   </div>
                   <div>
                     <h2 className="text-sm font-semibold text-slate-900 leading-tight">{post.ministry}</h2>
@@ -433,16 +447,16 @@ function Announcements() {
               </div>
 
               {/* Media Area */}
-              <div 
+              <div
                 className="relative aspect-square sm:aspect-[4/5] bg-slate-900 overflow-hidden select-none cursor-pointer"
                 onDoubleClick={() => handleDoubleTap(post.id)}
               >
-                <Img name={post.image} alt={post.title} className="w-full h-full object-cover"/>
-                
+                <Img name={post.image} alt={post.title} className="w-full h-full object-cover" />
+
                 {/* Big Like Animation */}
                 <AnimatePresence>
                   {bigHearts[post.id] && (
-                    <motion.div 
+                    <motion.div
                       initial={{ scale: 0, opacity: 0 }}
                       animate={{ scale: 1.2, opacity: 1 }}
                       exit={{ scale: 1.5, opacity: 0 }}
@@ -457,28 +471,28 @@ function Announcements() {
               {/* Interaction Bar */}
               <div className="px-4 pt-3 pb-2 flex items-center">
                 <div className="flex items-center gap-4">
-                  <motion.button 
+                  <motion.button
                     whileTap={{ scale: 0.85 }}
                     onClick={() => toggleLike(post.id)}
                     aria-label="Like post"
                     className="focus:outline-none"
                   >
-                    <Heart size={24} className={post.liked ? "text-rose-600 fill-rose-600" : "text-slate-800 hover:text-slate-600"}/>
+                    <Heart size={24} className={post.liked ? "text-rose-600 fill-rose-600" : "text-slate-800 hover:text-slate-600"} />
                   </motion.button>
-                  <motion.button 
+                  <motion.button
                     whileTap={{ scale: 0.85 }}
                     aria-label="Comment"
                     className="focus:outline-none text-slate-800 hover:text-slate-600"
                   >
-                    <MessageCircle size={24}/>
+                    <MessageCircle size={24} />
                   </motion.button>
-                  <motion.button 
+                  <motion.button
                     whileTap={{ scale: 0.85 }}
                     onClick={() => toggleNotify(post.id)}
                     aria-label="Toggle notifications for post"
                     className="focus:outline-none"
                   >
-                    <Bell size={24} className={post.notified ? "text-amber-600 fill-amber-600" : "text-slate-800 hover:text-slate-600"}/>
+                    <Bell size={24} className={post.notified ? "text-amber-600 fill-amber-600" : "text-slate-800 hover:text-slate-600"} />
                   </motion.button>
                 </div>
               </div>
@@ -486,16 +500,16 @@ function Announcements() {
               {/* Content Section */}
               <div className="px-4 pb-4 space-y-2">
                 <p className="text-sm font-semibold text-slate-900">{post.likesCount} likes</p>
-                
+
                 <div>
                   <h3 className="inline font-semibold text-slate-900 mr-2">{post.ministry}</h3>
                   <span className="text-slate-800 text-sm">
-                    {expandedCaptions[post.id] || post.content.length <= 100 
-                      ? post.content 
+                    {expandedCaptions[post.id] || post.content.length <= 100
+                      ? post.content
                       : post.content.slice(0, 100) + '...'}
                   </span>
                   {post.content.length > 100 && (
-                    <button 
+                    <button
                       onClick={() => setExpandedCaptions(prev => ({ ...prev, [post.id]: !prev[post.id] }))}
                       className="text-xs text-slate-500 font-medium ml-1 hover:underline"
                     >
@@ -519,7 +533,7 @@ function Announcements() {
 
                 {/* Comment Input Bar */}
                 <form onSubmit={(e) => addComment(post.id, e)} className="pt-2 flex items-center gap-2 border-t border-slate-100 mt-3">
-                  <input 
+                  <input
                     type="text"
                     value={commentInputs[post.id] || ''}
                     onChange={(e) => setCommentInputs(prev => ({ ...prev, [post.id]: e.target.value }))}
@@ -527,7 +541,7 @@ function Announcements() {
                     aria-label="Add a comment"
                     className="flex-1 bg-transparent text-sm text-slate-800 placeholder-slate-400 focus:outline-none py-1"
                   />
-                  <button 
+                  <button
                     type="submit"
                     disabled={!commentInputs[post.id]?.trim()}
                     className="text-xs font-semibold text-amber-700 disabled:opacity-40 hover:text-amber-800 transition"
@@ -588,7 +602,7 @@ function Admin() {
 
   useEffect(() => {
     if (!db) return;
-    getDocs(collection(db, 'push_subscriptions')).then(snap => setSubscriberCount(snap.size)).catch(() => {});
+    getDocs(collection(db, 'push_subscriptions')).then(snap => setSubscriberCount(snap.size)).catch(() => { });
   }, []);
 
   // Prayer requests admin state
@@ -600,7 +614,7 @@ function Admin() {
       const items = snap.docs.map((d: any) => ({ id: d.id, ...d.data() }));
       items.sort((a: any, b: any) => (b.createdAt || 0) - (a.createdAt || 0));
       setPrayerRequests(items);
-    }, () => {});
+    }, () => { });
     return () => unsubPrayers();
   }, []);
 
@@ -635,11 +649,11 @@ function Admin() {
     // Fetch announcements, home settings
     const unsubAnns = onSnapshot(collection(db, 'announcements'), (snap: any) => {
       if (!snap.empty) setList(snap.docs.map((d: any) => ({ id: d.id, ...d.data() })));
-    }, () => {});
+    }, () => { });
 
     const unsubHome = onSnapshot(collection(db, 'home_settings'), (snap: any) => {
       setHomeSettingsList(snap.docs.map((d: any) => ({ id: d.id, ...d.data() })));
-    }, () => {});
+    }, () => { });
 
     const unsubAlert = onSnapshot(collection(db, 'alerts'), (snap: any) => {
       if (!snap.empty) {
@@ -647,7 +661,7 @@ function Admin() {
         setAlertMsg(a.message || '');
         setAlertActive(a.active || false);
       }
-    }, () => {});
+    }, () => { });
 
     const unsubLive = onSnapshot(doc(db, 'settings', 'live_broadcast'), (snap: any) => {
       if (snap.exists()) {
@@ -657,7 +671,7 @@ function Admin() {
         setLiveTitle(d.title || 'Sunday Worship Service Live · Pastor David Samson');
         setLiveSchedule(d.nextService || 'Sunday 9:00 AM & 6:30 PM IST');
       }
-    }, () => {});
+    }, () => { });
 
     return () => {
       unsubAnns();
@@ -679,15 +693,15 @@ function Admin() {
   };
 
   if (!authed) {
-    return <section className="section page-title" style={{maxWidth:'500px',margin:'80px auto'}}>
+    return <section className="section page-title" style={{ maxWidth: '500px', margin: '80px auto' }}>
       <Tag>RESTRICTED ACCESS</Tag>
       <h1>Admin <em>Login.</em></h1>
       <p>Please enter administrator credentials to manage announcements and church broadcast settings.</p>
-      <form className="form form-card" onSubmit={login} style={{marginTop:'30px'}}>
-        <label>Username<input required value={user} onChange={e => setUser(e.target.value)} aria-label="Admin username" placeholder="Enter username"/></label>
-        <label>Password<input required type="password" value={pass} onChange={e => setPass(e.target.value)} aria-label="Admin password" placeholder="Enter password"/></label>
+      <form className="form form-card" onSubmit={login} style={{ marginTop: '30px' }}>
+        <label>Username<input required value={user} onChange={e => setUser(e.target.value)} aria-label="Admin username" placeholder="Enter username" /></label>
+        <label>Password<input required type="password" value={pass} onChange={e => setPass(e.target.value)} aria-label="Admin password" placeholder="Enter password" /></label>
         {err && <p className="form-status" role="alert">{err}</p>}
-        <button className="btn navy">Login to Admin Portal <ArrowRight size={17}/></button>
+        <button className="btn navy">Login to Admin Portal <ArrowRight size={17} /></button>
       </form>
     </section>;
   }
@@ -732,9 +746,9 @@ function Admin() {
           }
         }}>
           <h3>Create Timed Announcement (Auto-delete)</h3>
-          <label>Ministry / Sender<input required value={ministry} onChange={e => setMinistry(e.target.value)} placeholder="Youth Ministry"/></label>
-          <label>Title<input required value={title} onChange={e => setTitle(e.target.value)} placeholder="Sunday Special Service"/></label>
-          <label>Caption / Message<textarea required rows={4} value={content} onChange={e => setContent(e.target.value)} placeholder="Share details about the service or event..."/></label>
+          <label>Ministry / Sender<input required value={ministry} onChange={e => setMinistry(e.target.value)} placeholder="Youth Ministry" /></label>
+          <label>Title<input required value={title} onChange={e => setTitle(e.target.value)} placeholder="Sunday Special Service" /></label>
+          <label>Caption / Message<textarea required rows={4} value={content} onChange={e => setContent(e.target.value)} placeholder="Share details about the service or event..." /></label>
           <label>Photo Theme
             <select value={image} onChange={e => setImage(e.target.value)}>
               <option value="church-worship">Church Worship</option>
@@ -744,7 +758,7 @@ function Admin() {
               <option value="service-september">Service September</option>
             </select>
           </label>
-          <label>Or Custom Image URL / Thumbnail<input value={customImage} onChange={e => setCustomImage(e.target.value)} placeholder="https://images.unsplash.com/... or /images/..."/></label>
+          <label>Or Custom Image URL / Thumbnail<input value={customImage} onChange={e => setCustomImage(e.target.value)} placeholder="https://images.unsplash.com/... or /images/..." /></label>
           <label>Auto-delete Timing / Expiry
             <select value={expiryDays} onChange={e => setExpiryDays(e.target.value)}>
               <option value="1">1 Day</option>
@@ -754,7 +768,7 @@ function Admin() {
               <option value="30">1 Month</option>
             </select>
           </label>
-          <button className="btn gold">Publish Timed Post <Plus size={17}/></button>
+          <button className="btn gold">Publish Timed Post <Plus size={17} /></button>
         </form>
 
         {/* Add Song */}
@@ -782,8 +796,8 @@ function Admin() {
           }
         }}>
           <h3>Add Worship Song to Library</h3>
-          <label>Song Title<input required value={songTitle} onChange={e => setSongTitle(e.target.value)} placeholder="Ennai Nadathum"/></label>
-          <label>Artist / Writer<input value={songArtist} onChange={e => setSongArtist(e.target.value)} placeholder="Pastor David Samson"/></label>
+          <label>Song Title<input required value={songTitle} onChange={e => setSongTitle(e.target.value)} placeholder="Ennai Nadathum" /></label>
+          <label>Artist / Writer<input value={songArtist} onChange={e => setSongArtist(e.target.value)} placeholder="Pastor David Samson" /></label>
           <label>Category
             <select value={songCategory} onChange={e => setSongCategory(e.target.value)}>
               <option value="Worship">Worship</option>
@@ -793,8 +807,8 @@ function Admin() {
               <option value="Gospel">Gospel</option>
             </select>
           </label>
-          <label>Song Lyrics<textarea required rows={4} value={songLyrics} onChange={e => setSongLyrics(e.target.value)} placeholder="Enter hymn lyrics..."/></label>
-          <button className="btn navy">Add Song <Plus size={17}/></button>
+          <label>Song Lyrics<textarea required rows={4} value={songLyrics} onChange={e => setSongLyrics(e.target.value)} placeholder="Enter hymn lyrics..." /></label>
+          <button className="btn navy">Add Song <Plus size={17} /></button>
         </form>
 
         {/* Add Home Page Image / Banner */}
@@ -817,9 +831,9 @@ function Admin() {
           }
         }}>
           <h3>Add Home Page Image / Banner</h3>
-          <label>Banner Title<input value={homeImgTitle} onChange={e => setHomeImgTitle(e.target.value)} placeholder="Special Celebration"/></label>
-          <label>Image URL<input required value={homeImgUrl} onChange={e => setHomeImgUrl(e.target.value)} placeholder="https://... or /images/..."/></label>
-          <button className="btn navy">Add Home Image <Plus size={17}/></button>
+          <label>Banner Title<input value={homeImgTitle} onChange={e => setHomeImgTitle(e.target.value)} placeholder="Special Celebration" /></label>
+          <label>Image URL<input required value={homeImgUrl} onChange={e => setHomeImgUrl(e.target.value)} placeholder="https://... or /images/..." /></label>
+          <button className="btn navy">Add Home Image <Plus size={17} /></button>
         </form>
 
         {/* Important Alert Notification */}
@@ -839,8 +853,8 @@ function Admin() {
           }
         }}>
           <h3>Important Alert Notification for All</h3>
-          <label>Alert Message<input value={alertMsg} onChange={e => setAlertMsg(e.target.value)} placeholder="Special Prayer Meeting tonight at 7 PM!"/></label>
-          <label className="checkbox"><input type="checkbox" checked={alertActive} onChange={e => setAlertActive(e.target.checked)}/>Display alert banner to all users</label>
+          <label>Alert Message<input value={alertMsg} onChange={e => setAlertMsg(e.target.value)} placeholder="Special Prayer Meeting tonight at 7 PM!" /></label>
+          <label className="checkbox"><input type="checkbox" checked={alertActive} onChange={e => setAlertActive(e.target.checked)} />Display alert banner to all users</label>
           <button className="btn gold">Update Alert Broadcast</button>
         </form>
 
@@ -879,10 +893,10 @@ function Admin() {
           </p>
 
           <label className="checkbox font-bold text-sm bg-neutral-100 p-3 rounded">
-            <input 
-              type="checkbox" 
-              checked={liveActive} 
-              onChange={e => setLiveActive(e.target.checked)} 
+            <input
+              type="checkbox"
+              checked={liveActive}
+              onChange={e => setLiveActive(e.target.checked)}
               className="h-4 w-4"
             />
             <span className="ml-2 font-semibold text-neutral-900">
@@ -892,10 +906,10 @@ function Admin() {
 
           <label>
             YouTube Video ID or Live Stream URL
-            <input 
-              required 
-              value={liveVideoId} 
-              onChange={e => setLiveVideoId(e.target.value)} 
+            <input
+              required
+              value={liveVideoId}
+              onChange={e => setLiveVideoId(e.target.value)}
               placeholder="e.g. tKIroxrTbG8 or https://www.youtube.com/watch?v=..."
             />
             <small className="text-neutral-500 text-[11px] mt-1">
@@ -905,19 +919,19 @@ function Admin() {
 
           <label>
             Live Broadcast Title
-            <input 
-              required 
-              value={liveTitle} 
-              onChange={e => setLiveTitle(e.target.value)} 
+            <input
+              required
+              value={liveTitle}
+              onChange={e => setLiveTitle(e.target.value)}
               placeholder="Sunday Worship Celebration Live | Pastor David Samson"
             />
           </label>
 
           <label>
             Next Service Schedule / Timing
-            <input 
-              value={liveSchedule} 
-              onChange={e => setLiveSchedule(e.target.value)} 
+            <input
+              value={liveSchedule}
+              onChange={e => setLiveSchedule(e.target.value)}
               placeholder="Sunday 9:00 AM & 6:30 PM IST"
             />
           </label>
@@ -957,30 +971,30 @@ function Admin() {
 
           <label>
             Notification Title
-            <input 
-              required 
-              value={pushTitle} 
-              onChange={e => setPushTitle(e.target.value)} 
+            <input
+              required
+              value={pushTitle}
+              onChange={e => setPushTitle(e.target.value)}
               placeholder="🔴 ANOINTING MINISTRIES IS LIVE!"
             />
           </label>
 
           <label>
             Notification Message
-            <textarea 
-              required 
-              rows={3} 
-              value={pushBody} 
-              onChange={e => setPushBody(e.target.value)} 
+            <textarea
+              required
+              rows={3}
+              value={pushBody}
+              onChange={e => setPushBody(e.target.value)}
               placeholder="Join Pastor David Samson for live worship, prayer, and God's Word..."
             />
           </label>
 
           <label>
             Target Page URL / Action Link
-            <input 
-              value={pushUrl} 
-              onChange={e => setPushUrl(e.target.value)} 
+            <input
+              value={pushUrl}
+              onChange={e => setPushUrl(e.target.value)}
               placeholder="/live, /bible, /worship, or https://youtube.com/..."
             />
           </label>
@@ -989,8 +1003,8 @@ function Admin() {
             <button className="btn gold flex items-center gap-2">
               <Send size={16} /> Broadcast Push Notification Now
             </button>
-            <button 
-              type="button" 
+            <button
+              type="button"
               onClick={() => {
                 if ('Notification' in window && Notification.permission === 'granted') {
                   new Notification(pushTitle || 'Test Notification', {
@@ -1042,13 +1056,13 @@ function Admin() {
                     {p.birthday && <span>🎂 Birthday: {p.birthday}</span>}
                   </div>
                   <p className="text-neutral-800 bg-white p-3 rounded border border-neutral-100">{p.message}</p>
-                  <button 
+                  <button
                     onClick={async () => {
                       try {
                         await deleteDoc(doc(db, 'prayer_requests', p.id));
                         notify('Prayer request marked as prayed / archived');
-                      } catch {}
-                    }} 
+                      } catch { }
+                    }}
                     className="text-rose-600 font-semibold hover:underline mt-1"
                   >
                     Archive / Complete Request
@@ -1081,15 +1095,15 @@ function Admin() {
         <Tag>MANAGED POSTS</Tag>
         <h3>{list.length} Posts</h3>
         <p className="small muted">Posts automatically expire after their scheduled duration.</p>
-        <div style={{display:'flex',flexDirection:'column',gap:'12px',marginTop:'20px'}}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginTop: '20px' }}>
           {list.map((a: any) => (
-            <div key={a.id} className="form-card" style={{padding:'15px'}}>
+            <div key={a.id} className="form-card" style={{ padding: '15px' }}>
               <h4>{a.title}</h4>
               <p className="small">{a.ministry} · Expires: {a.expiresAt ? new Date(a.expiresAt).toLocaleDateString() : 'No expiry'}</p>
-              <button className="text-link" style={{color:'#e53e3e',marginTop:'8px'}} onClick={async () => {
+              <button className="text-link" style={{ color: '#e53e3e', marginTop: '8px' }} onClick={async () => {
                 try {
                   await deleteDoc(doc(db, 'announcements', a.id));
-                } catch {}
+                } catch { }
                 setList(l => l.filter((x: any) => x.id !== a.id));
                 notify('Post removed');
               }}>Delete post</button>
@@ -1097,17 +1111,17 @@ function Admin() {
           ))}
         </div>
 
-        <div style={{marginTop:'30px'}}>
+        <div style={{ marginTop: '30px' }}>
           <Tag>HOME BANNERS</Tag>
           <h3>{homeSettingsList.length} Banners</h3>
-          <div style={{display:'flex',flexDirection:'column',gap:'10px',marginTop:'15px'}}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginTop: '15px' }}>
             {homeSettingsList.map(h => (
-              <div key={h.id} className="form-card" style={{padding:'12px'}}>
+              <div key={h.id} className="form-card" style={{ padding: '12px' }}>
                 <p className="small font-bold">{h.title}</p>
-                <button className="text-link" style={{color:'#e53e3e',marginTop:'5px'}} onClick={async () => {
+                <button className="text-link" style={{ color: '#e53e3e', marginTop: '5px' }} onClick={async () => {
                   try {
                     await deleteDoc(doc(db, 'home_settings', h.id));
-                  } catch {}
+                  } catch { }
                   setHomeSettingsList(l => l.filter(x => x.id !== h.id));
                   notify('Banner removed');
                 }}>Remove banner</button>
@@ -1127,22 +1141,22 @@ function Home() {
   useEffect(() => {
     const unsub = onSnapshot(collection(db, 'home_settings'), (snap: any) => {
       setHomeBanners(snap.docs.map((d: any) => ({ id: d.id, ...d.data() })));
-    }, () => {});
+    }, () => { });
     return () => unsub();
   }, []);
 
   return <>
     <section className="hero ref-hero">
-      <Img name="congregation" className="hero-img" alt="The congregation worshipping at Anointing Ministries"/>
-      <div className="hero-shade"/>
-      <LightAtmosphere/>
+      <Img name="congregation" className="hero-img" alt="The congregation worshipping at Anointing Ministries" />
+      <div className="hero-shade" />
+      <LightAtmosphere />
       <motion.div className="hero-copy" initial={{ opacity: 0, y: 25 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1 }}>
-        <Tag><span className="tiny-line"/> A PLACE TO BELONG. A FAITH TO LIVE.</Tag>
-        <h1>Welcome to<br/>Worship.</h1>
-        <p>A community rooted in Christ,<br className="desktop"/> growing in faith together.</p>
+        <Tag><span className="tiny-line" /> A PLACE TO BELONG. A FAITH TO LIVE.</Tag>
+        <h1>Welcome to<br />Worship.</h1>
+        <p>A community rooted in Christ,<br className="desktop" /> growing in faith together.</p>
         <div className="actions">
-          <Link to="/live" className="ref-hero-cta"><span><Play size={15} fill="currentColor"/></span>Join worship<ArrowRight size={18}/></Link>
-          <Link to="/live" className="hero-watch"><span><Play size={15} fill="currentColor"/></span> Watch live worship</Link>
+          <Link to="/live" className="ref-hero-cta"><span><Play size={15} fill="currentColor" /></span>Join worship<ArrowRight size={18} /></Link>
+          <Link to="/live" className="hero-watch"><span><Play size={15} fill="currentColor" /></span> Watch live worship</Link>
         </div>
       </motion.div>
       <div className="hero-bottom">
@@ -1152,18 +1166,18 @@ function Home() {
       </div>
     </section>
 
-    <div className="ref-home-hub"><DailyVerse variant="home"/><QuickAccess/><CommunityInvite/></div>
-    <LiveStatus compact/>
+    <div className="ref-home-hub"><DailyVerse variant="home" /><QuickAccess /><CommunityInvite /></div>
+    <LiveStatus compact />
     {/* Admin added home banners */}
     {homeBanners.length > 0 && (
-      <section className="section" style={{background:'#f9f6ef'}}>
+      <section className="section" style={{ background: '#f9f6ef' }}>
         <Tag>FEATURED HIGHLIGHTS</Tag>
         <h2>From the <em>Ministry.</em></h2>
-        <div className="cards three" style={{marginTop:'30px'}}>
+        <div className="cards three" style={{ marginTop: '30px' }}>
           {homeBanners.map(b => (
             <div key={b.id} className="song-card">
               <div className="song-cover">
-                <Img name={b.imageUrl} alt={b.title}/>
+                <Img name={b.imageUrl} alt={b.title} />
               </div>
               <div className="song-card-body">
                 <h3>{b.title}</h3>
@@ -1183,10 +1197,10 @@ function Home() {
       <Reveal>
         <p>There’s a place for you here. A place to ask questions, find encouragement, and discover the extraordinary love of God in everyday life.</p>
         <p>Wherever you are on your journey, let’s take the next step together.</p>
-        <Link className="text-link" to="/about">Get to know us <ArrowRight size={17}/></Link>
+        <Link className="text-link" to="/about">Get to know us <ArrowRight size={17} /></Link>
       </Reveal>
       <div className="welcome-seal">
-        <img src="/images/anointing-logo.jpg" alt="Anointing Ministries seal"/>
+        <img src="/images/anointing-logo.jpg" alt="Anointing Ministries seal" />
         <span>ROOTED IN FAITH<br />GROWING IN LOVE</span>
       </div>
     </section>
@@ -1196,15 +1210,15 @@ function Home() {
           <Tag>A MOMENT WITH GOD</Tag>
           <h2>Make room for <em>worship.</em></h2>
         </Reveal>
-        <Link to="/worship" className="text-link">Explore worship <ArrowRight size={17}/></Link>
+        <Link to="/worship" className="text-link">Explore worship <ArrowRight size={17} /></Link>
       </div>
       <div className="worship-grid">
         <Link to="/worship#live" className="feature-photo">
-          <Img name="congregation" alt="Worship at Anointing Ministries"/>
-          <div className="photo-overlay"/>
+          <Img name="congregation" alt="Worship at Anointing Ministries" />
+          <div className="photo-overlay" />
           <div className="feature-top">
             <span className="glass-label">WORSHIP WITH US</span>
-            <span className="round-play"><Play size={22}/></span>
+            <span className="round-play"><Play size={22} /></span>
           </div>
           <div className="feature-caption">
             <Tag>ONE FAITH. WHEREVER YOU ARE.</Tag>
@@ -1214,38 +1228,38 @@ function Home() {
         </Link>
         <div className="music-feature">
           <div className="music-feature-head mb-3">
-            <Music2 size={22} strokeWidth={1}/>
+            <Music2 size={22} strokeWidth={1} />
             <span>OUR WORSHIP VOICE · PASTOR DAVID SAMSON</span>
           </div>
           <h3>Let your heart<br /><em>find its song.</em></h3>
           <p>Anointing Ministries Tamil & English Worship Collection. Lift your voice in praise.</p>
-          {initialSongs.slice(0, 3).map(s => <SongRow key={s.id} song={s}/>)}
-          <Link className="text-link" to="/worship#songs">Discover full song library <ArrowRight size={17}/></Link>
+          {initialSongs.slice(0, 3).map(s => <SongRow key={s.id} song={s} />)}
+          <Link className="text-link" to="/worship#songs">Discover full song library <ArrowRight size={17} /></Link>
         </div>
       </div>
     </section>
-    <div className="ref-home-song-section"><WorshipPreview/></div>
-    <MinistryArchive/>
+    <div className="ref-home-song-section"><WorshipPreview /></div>
+    <MinistryArchive />
     <section className="prayer-banner">
-      <div className="prayer-orbit"/>
+      <div className="prayer-orbit" />
       <Reveal>
         <Tag>YOU DON’T HAVE TO WALK ALONE</Tag>
         <h2>Let us pray <em>with you.</em></h2>
         <p>Every worry, every hope, every unspoken prayer.<br />There is room for it here.</p>
-        <Link to="/prayer" className="btn gold">Share a prayer request <ArrowUpRight size={17}/></Link>
+        <Link to="/prayer" className="btn gold">Share a prayer request <ArrowUpRight size={17} /></Link>
       </Reveal>
       <span className="large-cross" aria-hidden="true">✝</span>
     </section>
-    <CommunityConnect/>
-    <ChurchGallery/>
+    <CommunityConnect />
+    <ChurchGallery />
   </>;
 }
 
 function Footer() {
   return <footer>
-    <AppInstall/>
+    <AppInstall />
     <div className="footer-top">
-      <Brand/>
+      <Brand />
       <p>A place to belong.<br />A faith to live.</p>
       <div>
         <Link to="/about">Our story</Link>
@@ -1255,11 +1269,11 @@ function Footer() {
       </div>
       <div>
         <Link to="/worship">Worship library</Link>
-        <Link to="/worship/presentation">Presentation studio <ArrowUpRight size={13}/></Link>
-        <Link to="/admin"><Shield size={13}/> Admin Portal</Link>
+        <Link to="/worship/presentation">Presentation studio <ArrowUpRight size={13} /></Link>
+        <Link to="/admin"><Shield size={13} /> Admin Portal</Link>
       </div>
     </div>
-    <SocialLinks/>
+    <SocialLinks />
     <div className="footer-bottom">
       <span>© {new Date().getFullYear()} Anointing Ministries</span>
       <span>Built with faith, hope & love.</span>
@@ -1288,19 +1302,19 @@ function Verse() {
   const { notify } = useApp();
   return <section className="verse section">
     <div className="verse-label">
-      <BookOpen size={19}/>
+      <BookOpen size={19} />
       <Tag>VERSE OF THE DAY</Tag>
-      <span className="verse-rule"/>
+      <span className="verse-rule" />
     </div>
     <blockquote key={i}>“{verses[i][0]}”</blockquote>
     <p>— {verses[i][1]} <span>(KJV · public-domain text)</span></p>
     <div className="verse-controls">
-      <IconButton label="Previous verse" onClick={() => setI((i + verses.length - 1) % verses.length)}><ChevronLeft size={18}/></IconButton>
+      <IconButton label="Previous verse" onClick={() => setI((i + verses.length - 1) % verses.length)}><ChevronLeft size={18} /></IconButton>
       <span>{i + 1} / {verses.length}</span>
-      <IconButton label="Next verse" onClick={() => setI((i + 1) % verses.length)}><ChevronRight size={18}/></IconButton>
-      <span className="control-divider"/>
-      <IconButton label="Copy verse" onClick={() => copyShare(verses[i].join(' — '), false, notify)}><Copy size={16}/></IconButton>
-      <IconButton label="Share verse" onClick={() => copyShare(verses[i].join(' — '), true, notify)}><Share2 size={16}/></IconButton>
+      <IconButton label="Next verse" onClick={() => setI((i + 1) % verses.length)}><ChevronRight size={18} /></IconButton>
+      <span className="control-divider" />
+      <IconButton label="Copy verse" onClick={() => copyShare(verses[i].join(' — '), false, notify)}><Copy size={16} /></IconButton>
+      <IconButton label="Share verse" onClick={() => copyShare(verses[i].join(' — '), true, notify)}><Share2 size={16} /></IconButton>
     </div>
   </section>;
 }
@@ -1318,32 +1332,57 @@ function Live() {
   const { notify } = useApp();
   const [liveData, setLiveData] = useState<any>({
     isLive: false,
-    videoId: 'tKIroxrTbG8',
+    videoId: '',
     title: 'Sunday Worship Service · Anointing Ministries',
     nextService: 'Sunday 9:00 AM & 6:30 PM IST'
   });
 
   useEffect(() => {
+    // 1. Fetch live broadcast or latest Sunday service from /api/live
+    fetch('/api/live')
+      .then(res => res.ok ? res.json() : null)
+      .then(data => {
+        if (data && data.videoId) {
+          setLiveData((prev: any) => ({
+            ...prev,
+            isLive: data.status === 'live',
+            videoId: data.videoId,
+            title: data.title || prev.title,
+            nextService: data.nextService || prev.nextService
+          }));
+        }
+      })
+      .catch(() => { });
+
+    // 2. Sync real-time Firestore broadcast override if configured by admin
     if (!db) return;
     try {
       const unsub = onSnapshot(doc(db, 'settings', 'live_broadcast'), (snap: any) => {
         if (snap.exists()) {
           setLiveData(snap.data());
         }
-      }, () => {});
+      }, () => { });
       return () => unsub();
-    } catch {}
+    } catch { }
   }, []);
 
-  const videoId = liveData.videoId || config.youtubeVideoId || 'tKIroxrTbG8';
+  const videoId = liveData.videoId || (config.youtubeVideoId !== 'tKIroxrTbG8' ? config.youtubeVideoId : '');
   const isLive = liveData.isLive ?? config.liveActive;
+  const channelId = 'UCVlqXBkmLozubnyVjUeD5Zw';
+  const uploadsPlaylistId = 'UUVlqXBkmLozubnyVjUeD5Zw';
+
+  const embedSrc = isLive
+    ? `https://www.youtube.com/embed/live_stream?channel=${channelId}&autoplay=1`
+    : (videoId && videoId !== 'tKIroxrTbG8'
+      ? `https://www.youtube.com/embed/${videoId}?rel=0`
+      : `https://www.youtube.com/embed/videoseries?list=${uploadsPlaylistId}&rel=0`);
 
   return <section className="section live-section" id="live">
     <div className="live-screen">
-      <iframe 
-        title="Official worship broadcast" 
-        src={`https://www.youtube.com/embed/${videoId}?autoplay=${isLive ? 1 : 0}&rel=0`} 
-        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+      <iframe
+        title="Official worship broadcast"
+        src={embedSrc}
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
         allowFullScreen
       />
     </div>
@@ -1352,7 +1391,7 @@ function Live() {
       <h2>Wherever you are,<br /><em>you belong here.</em></h2>
       <p>{isLive ? 'The church is broadcasting live now from Madukkarai Sanctuary.' : 'Make a little room in your day to pause, reflect, and worship with us.'}</p>
       <div className="detail-line">
-        <CalendarDays size={18}/>
+        <CalendarDays size={18} />
         {liveData.nextService || 'Next Service: Sunday 9:00 AM & 6:30 PM IST'}
       </div>
       <p className="muted small">Watch recorded or live services from our YouTube ministry channel.</p>
@@ -1361,10 +1400,10 @@ function Live() {
           <Radio size={14} /> Open Full Live Worship Room
         </Link>
         <button className="text-link" onClick={() => copyShare(window.location.origin + '/live', true, notify)}>
-          Share live broadcast <Share2 size={16}/>
+          Share live broadcast <Share2 size={16} />
         </button>
         <a className="text-link" href={config.socials.youtube + '/live'} target="_blank" rel="noopener noreferrer">
-          Watch on YouTube Live <ArrowUpRight size={16}/>
+          Watch on YouTube Live <ArrowUpRight size={16} />
         </a>
       </div>
     </aside>
@@ -1374,9 +1413,9 @@ function Live() {
 function SongRow({ song }: any) {
   const { play } = useApp();
   return <div className="song-row">
-    <div className="song-art"><Music2 size={20}/></div>
+    <div className="song-art"><Music2 size={20} /></div>
     <div><b>{song.title}</b><small>Hymn collection · lyrics available</small></div>
-    <IconButton label={'Open ' + song.title} onClick={() => play(song)}><Play size={17}/></IconButton>
+    <IconButton label={'Open ' + song.title} onClick={() => play(song)}><Play size={17} /></IconButton>
   </div>;
 }
 
@@ -1388,19 +1427,19 @@ function Worship() {
   const [name, setName] = useState('');
   const filtered = songs.filter((s: Song) => (s.title + ' ' + s.artist).toLowerCase().includes(q.toLowerCase()) && (category === 'All' || s.category === category || s.language === category) && (view === 'All songs' || view === 'Favorites' && favs.includes(s.id) || view === 'Recently played' && recent.includes(s.id) || lists.find(l => l.name === view)?.ids.includes(s.id)));
   return <>
-    <PageTitle tag="A HEART OF WORSHIP" title={<>Let your heart <em>find its song.</em></>} text="A quiet moment. A familiar melody. A little closer to Him."/>
+    <PageTitle tag="A HEART OF WORSHIP" title={<>Let your heart <em>find its song.</em></>} text="A quiet moment. A familiar melody. A little closer to Him." />
     <Live />
-    <PastorSongs/>
+    <PastorSongs />
     <section className="section" id="songs">
       <div className="section-heading">
         <div>
           <Tag>THE WORSHIP COLLECTION</Tag>
           <h2>Songs for <em>your soul.</em></h2>
         </div>
-        <Link className="btn outline" to="/worship/presentation"><Monitor size={17}/>Presentation studio</Link>
+        <Link className="btn outline" to="/worship/presentation"><Monitor size={17} />Presentation studio</Link>
       </div>
       <div className="toolbar">
-        <label className="search"><Search size={18}/><input aria-label="Search songs" placeholder="Search a song or artist…" value={q} onChange={e => setQ(e.target.value)}/></label>
+        <label className="search"><Search size={18} /><input aria-label="Search songs" placeholder="Search a song or artist…" value={q} onChange={e => setQ(e.target.value)} /></label>
         <select aria-label="Library view" value={view} onChange={e => setView(e.target.value)}>
           {['All songs', 'Favorites', 'Recently played', ...lists.map(l => l.name)].map(x => <option key={x}>{x}</option>)}
         </select>
@@ -1412,20 +1451,20 @@ function Worship() {
       <div className="cards three">
         {filtered.map((s: Song, idx: number) => <motion.article className="song-card" key={s.id} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.4, delay: idx * 0.04 }}>
           <div className="song-cover">
-            <Img name={s.image} alt=""/>
-            <div className="cover-shade"/>
+            <Img name={s.image} alt="" />
+            <div className="cover-shade" />
             <span>{s.category}</span>
-            <IconButton label={'Play ' + s.title} onClick={() => play(s)}><Play fill="currentColor" size={20}/></IconButton>
+            <IconButton label={'Play ' + s.title} onClick={() => play(s)}><Play fill="currentColor" size={20} /></IconButton>
           </div>
           <div className="song-card-body">
             <div className="row-between">
               <h3>{s.title}</h3>
-              <IconButton label={'Favorite ' + s.title} aria-pressed={favs.includes(s.id)} onClick={() => toggle(s.id)}><Heart size={18} fill={favs.includes(s.id) ? 'currentColor' : 'none'}/></IconButton>
+              <IconButton label={'Favorite ' + s.title} aria-pressed={favs.includes(s.id)} onClick={() => toggle(s.id)}><Heart size={18} fill={favs.includes(s.id) ? 'currentColor' : 'none'} /></IconButton>
             </div>
             <p>{s.artist}</p>
             <small>{s.src ? 'Audio ready' : 'Audio not added'} · {s.duration}</small>
             <div className="song-card-tools">
-              <button onClick={() => setModal({ title: s.title, lyrics: s.lyrics, body: 'Public-domain hymn text.' })}>View lyrics <BookOpen size={14}/></button>
+              <button onClick={() => setModal({ title: s.title, lyrics: s.lyrics, body: 'Public-domain hymn text.' })}>View lyrics <BookOpen size={14} /></button>
               <label className="upload">
                 {s.src ? 'Replace audio' : 'Add audio'}
                 <input type="file" accept="audio/*" aria-label={'Upload audio for ' + s.title} onChange={e => {
@@ -1435,7 +1474,7 @@ function Worship() {
                     setSongs((a: Song[]) => a.map(x => x.id === s.id ? { ...x, src: url } : x));
                     notify('Audio added for this session');
                   }
-                }}/>
+                }} />
               </label>
             </div>
             {lists.length > 0 && <select aria-label={'Add ' + s.title + ' to playlist'} value="" onChange={e => {
@@ -1465,8 +1504,8 @@ function Worship() {
         }}>
           <label>Create a playlist
             <div className="inline-form">
-              <input required maxLength={45} placeholder="Sunday worship" aria-label="New playlist name" value={name} onChange={e => setName(e.target.value)}/>
-              <button className="btn navy"><Plus size={17}/>Create</button>
+              <input required maxLength={45} placeholder="Sunday worship" aria-label="New playlist name" value={name} onChange={e => setName(e.target.value)} />
+              <button className="btn navy"><Plus size={17} />Create</button>
             </div>
           </label>
         </form>
@@ -1479,16 +1518,16 @@ function Worship() {
             setSongs((s: Song[]) => [...s, newSong]);
             try {
               await setDoc(doc(db, 'songs', newSong.id), newSong);
-            } catch {}
+            } catch { }
             e.currentTarget.reset();
             notify('Song added successfully');
           }}>
-            <input required name="title" placeholder="Song title" aria-label="Song title"/>
-            <input required name="artist" placeholder="Artist / ministry" aria-label="Artist or ministry"/>
+            <input required name="title" placeholder="Song title" aria-label="Song title" />
+            <input required name="artist" placeholder="Artist / ministry" aria-label="Artist or ministry" />
             <select name="category" aria-label="Song category">{['Praise', 'Worship', 'Thanksgiving', 'Prayer', 'Gospel'].map(x => <option key={x}>{x}</option>)}</select>
             <select name="language" aria-label="Song language"><option>English Worship</option><option>Tamil Worship</option></select>
-            <textarea required name="lyrics" placeholder="Lyrics you have permission to use" aria-label="Authorized song lyrics"/>
-            <label className="checkbox"><input required type="checkbox"/>I have permission to use these lyrics.</label>
+            <textarea required name="lyrics" placeholder="Lyrics you have permission to use" aria-label="Authorized song lyrics" />
+            <label className="checkbox"><input required type="checkbox" />I have permission to use these lyrics.</label>
             <button className="btn navy">Add song</button>
           </form>
         </details>
@@ -1512,38 +1551,38 @@ function Player() {
   };
   const fmt = (t: number) => `${Math.floor(t / 60)}:${String(Math.floor(t % 60)).padStart(2, '0')}`;
   return <motion.div initial={{ y: 80, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: 80, opacity: 0 }} transition={{ type: 'spring', damping: 25, stiffness: 300 }} className="player">
-    <audio ref={audio} src={current.src} onPlay={() => setPlaying(true)} onPause={() => setPlaying(false)} onTimeUpdate={() => setTime(audio.current?.currentTime || 0)} onLoadedMetadata={() => setDuration(audio.current?.duration || 0)} onEnded={() => advance(1)} onError={() => notify('This audio format could not be played. Try MP3 or WAV.')}/>
+    <audio ref={audio} src={current.src} onPlay={() => setPlaying(true)} onPause={() => setPlaying(false)} onTimeUpdate={() => setTime(audio.current?.currentTime || 0)} onLoadedMetadata={() => setDuration(audio.current?.duration || 0)} onEnded={() => advance(1)} onError={() => notify('This audio format could not be played. Try MP3 or WAV.')} />
     <div className="player-title">
       <Music2 />
       <div><b>{current.title}</b><small>Your authorized audio</small></div>
     </div>
     <div className="player-controls">
-      <IconButton label="Previous song" onClick={() => advance(-1)}><SkipBack size={17}/></IconButton>
+      <IconButton label="Previous song" onClick={() => advance(-1)}><SkipBack size={17} /></IconButton>
       <IconButton label={playing ? 'Pause' : 'Play'} onClick={() => {
         if (playing) audio.current?.pause();
         else audio.current?.play().catch(() => notify('Unable to play this file'));
       }}>{playing ? <Pause /> : <Play />}</IconButton>
-      <IconButton label="Next song" onClick={() => advance(1)}><SkipForward size={17}/></IconButton>
+      <IconButton label="Next song" onClick={() => advance(1)}><SkipForward size={17} /></IconButton>
     </div>
     <span className="small">{fmt(time)}</span>
-    <input className="seek" type="range" aria-label="Playback position" min={0} max={duration || 1} value={time} onChange={e => { if (audio.current) audio.current.currentTime = Number(e.target.value); }}/>
+    <input className="seek" type="range" aria-label="Playback position" min={0} max={duration || 1} value={time} onChange={e => { if (audio.current) audio.current.currentTime = Number(e.target.value); }} />
     <span className="small">{fmt(duration)}</span>
-    <Volume2 size={18}/>
-    <input className="volume" type="range" min={0} max={1} step={.01} defaultValue={1} aria-label="Volume" onChange={e => { if (audio.current) audio.current.volume = Number(e.target.value); }}/>
-    <IconButton label="Close player" onClick={() => setCurrent(null)}><X size={18}/></IconButton>
+    <Volume2 size={18} />
+    <input className="volume" type="range" min={0} max={1} step={.01} defaultValue={1} aria-label="Volume" onChange={e => { if (audio.current) audio.current.volume = Number(e.target.value); }} />
+    <IconButton label="Close player" onClick={() => setCurrent(null)}><X size={18} /></IconButton>
   </motion.div>;
 }
 
 function SermonCard({ s }: any) {
   return <Link className="sermon-card" to={'/sermons/' + s.id}>
     <div className="sermon-photo">
-      <Img name={s.image} alt="Church and community" loading="lazy"/>
+      <Img name={s.image} alt="Church and community" loading="lazy" />
       <span className="image-pill">SAMPLE SERMON</span>
-      <span className="small-play"><Play size={17}/></span>
+      <span className="small-play"><Play size={17} /></span>
     </div>
     <div className="sermon-meta">{s.topic.toUpperCase()} <span>•</span> {s.reference}</div>
     <h3>{s.title}</h3>
-    <span className="text-link small">Explore message <ArrowUpRight size={15}/></span>
+    <span className="text-link small">Explore message <ArrowUpRight size={15} /></span>
   </Link>;
 }
 
@@ -1552,20 +1591,20 @@ function Sermons() {
   const [q, setQ] = useState(''), [topic, setTopic] = useState('All topics'), [scripture, setScripture] = useState('All scriptures');
   const list = sermons.filter(s => s.title.toLowerCase().includes(q.toLowerCase()) && (topic === 'All topics' || s.topic === topic) && (scripture === 'All scriptures' || s.scripture === scripture));
   return <>
-    <PageTitle tag="GROW IN THE WORD" title={<>Faith for <em>everyday life.</em></>} text="Messages to encourage your heart and deepen your walk with God."/>
-    <MinistryArchive/>
+    <PageTitle tag="GROW IN THE WORD" title={<>Faith for <em>everyday life.</em></>} text="Messages to encourage your heart and deepen your walk with God." />
+    <MinistryArchive />
     <section className="section pt0">
       <div className="featured-sermon">
-        <Img alt="Warm church interior"/>
+        <Img alt="Warm church interior" />
         <div>
           <Tag>FEATURED · SAMPLE MESSAGE</Tag>
           <h2>Walking by faith,<br /><em>not by sight.</em></h2>
           <p>Discover what it means to trust God with the next step, even when the whole path isn’t clear.</p>
-          <Link className="btn gold" to="/sermons/walking-by-faith">Explore message <ArrowRight size={17}/></Link>
+          <Link className="btn gold" to="/sermons/walking-by-faith">Explore message <ArrowRight size={17} /></Link>
         </div>
       </div>
       <div className="toolbar">
-        <label className="search"><Search size={18}/><input placeholder="Search messages…" aria-label="Search sermons" value={q} onChange={e => setQ(e.target.value)}/></label>
+        <label className="search"><Search size={18} /><input placeholder="Search messages…" aria-label="Search sermons" value={q} onChange={e => setQ(e.target.value)} /></label>
         <select aria-label="Filter topics" onChange={e => setTopic(e.target.value)}>
           {['All topics', ...sermons.map(s => s.topic)].map(x => <option key={x}>{x}</option>)}
         </select>
@@ -1573,7 +1612,7 @@ function Sermons() {
           {['All scriptures', ...sermons.map(s => s.scripture)].map(x => <option key={x}>{x}</option>)}
         </select>
       </div>
-      <div className="cards three">{list.map(s => <SermonCard key={s.id} s={s}/>)}</div>
+      <div className="cards three">{list.map(s => <SermonCard key={s.id} s={s} />)}</div>
       {!list.length && <p className="empty">No messages match your search.</p>}
     </section>
   </>;
@@ -1587,11 +1626,11 @@ function SermonDetail() {
   const { notify } = useApp();
   if (!s) return <PageTitle title="Message not found"><Link to="/sermons">Back to sermons</Link></PageTitle>;
   return <>
-    <PageTitle tag="SAMPLE SERMON" title={s.title} text={s.reference}/>
+    <PageTitle tag="SAMPLE SERMON" title={s.title} text={s.reference} />
     <section className="section pt0 detail-layout">
       <div>
         <div className="video-frame">
-          {video ? <iframe title={s.title} src={'https://www.youtube-nocookie.com/embed/' + video} allowFullScreen/> : <div className="empty"><Play size={40}/><h3>A message worth pausing for.</h3><p>No sermon recording has been supplied.</p></div>}
+          {video ? <iframe title={s.title} src={'https://www.youtube-nocookie.com/embed/' + video} allowFullScreen /> : <div className="empty"><Play size={40} /><h3>A message worth pausing for.</h3><p>No sermon recording has been supplied.</p></div>}
         </div>
         <form className="inline-form" onSubmit={e => {
           e.preventDefault();
@@ -1599,7 +1638,7 @@ function SermonDetail() {
           if (m) setVideo(m[1]);
           else notify('Enter a valid YouTube video URL');
         }}>
-          <input type="url" required aria-label="Authorized sermon video URL" placeholder="Add an authorized YouTube video URL" value={url} onChange={e => setUrl(e.target.value)}/>
+          <input type="url" required aria-label="Authorized sermon video URL" placeholder="Add an authorized YouTube video URL" value={url} onChange={e => setUrl(e.target.value)} />
           <button className="btn navy">Load video</button>
         </form>
         <p className="small muted">Video is loaded for this session only. Use an official church recording.</p>
@@ -1608,25 +1647,25 @@ function SermonDetail() {
         <Tag>MESSAGE DETAILS</Tag>
         <h3>{s.title}</h3>
         <p>Pastor · Not provided<br />Date · Not provided<br />Duration · Not provided</p>
-        <p><BookOpen size={17}/> {s.reference}</p>
+        <p><BookOpen size={17} /> {s.reference}</p>
         <p className="muted">This is a sample topic, not a published church sermon.</p>
-        <Link className="text-link" to="/sermons"><ChevronLeft size={16}/>All messages</Link>
+        <Link className="text-link" to="/sermons"><ChevronLeft size={16} />All messages</Link>
       </aside>
     </section>
   </>;
 }
 
-function PrivateForm({kind='prayer'}:{kind?:string}) {
+function PrivateForm({ kind = 'prayer' }: { kind?: string }) {
   const prayerDraft = useLocation().state?.prayerDraft || '';
-  const [category,setCategory]=useState('Personal prayer'),[status,setStatus]=useState(''),[busy,setBusy]=useState(false),[compose,setCompose]=useState('');
-  return <form className="form form-card" onSubmit={async e=>{
+  const [category, setCategory] = useState('Personal prayer'), [status, setStatus] = useState(''), [busy, setBusy] = useState(false), [compose, setCompose] = useState('');
+  return <form className="form form-card" onSubmit={async e => {
     e.preventDefault();
-    const form=e.currentTarget,fd=new FormData(form);
-    const d={...Object.fromEntries(fd),category:kind==='prayer'?category:'Contact',birthdayConsent:fd.get('birthdayConsent')==='on'};
-    setCompose('https://mail.google.com/mail/?'+new URLSearchParams({view:'cm',fs:'1',to:'maker200222@gmail.com',su:'Anointing Ministries — Private request',body:Object.entries(d).map(([k,v])=>k+': '+v).join('\n')}));
+    const form = e.currentTarget, fd = new FormData(form);
+    const d = { ...Object.fromEntries(fd), category: kind === 'prayer' ? category : 'Contact', birthdayConsent: fd.get('birthdayConsent') === 'on' };
+    setCompose('https://mail.google.com/mail/?' + new URLSearchParams({ view: 'cm', fs: '1', to: 'maker200222@gmail.com', su: 'Anointing Ministries — Private request', body: Object.entries(d).map(([k, v]) => k + ': ' + v).join('\n') }));
     setBusy(true);
-    try{
-      const r=await fetch('/api/prayer',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(d)});
+    try {
+      const r = await fetch('/api/prayer', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(d) });
       // Also post to https://form.svhrt.com/6ad3920b7c9d7f5654768353 as requested
       try {
         await fetch('https://form.svhrt.com/6ad3920b7c9d7f5654768353', {
@@ -1635,7 +1674,7 @@ function PrivateForm({kind='prayer'}:{kind?:string}) {
           body: JSON.stringify(d),
           mode: 'no-cors'
         });
-      } catch {}
+      } catch { }
 
       // Save prayer request to Firestore for Admin dashboard
       try {
@@ -1643,45 +1682,45 @@ function PrivateForm({kind='prayer'}:{kind?:string}) {
           ...d,
           createdAt: Date.now()
         });
-      } catch {}
+      } catch { }
 
-      const data=await r.json();
-      if(!r.ok)throw Error(data.error||'Delivery failed');
+      const data = await r.json();
+      if (!r.ok) throw Error(data.error || 'Delivery failed');
       setStatus(data.message);
       form.reset();
       setCompose('');
-    }catch(err){
+    } catch (err) {
       setStatus((err as Error).message);
-    }finally{
+    } finally {
       setBusy(false);
     }
   }}>
-    <h3>{kind==='prayer'?'A space for your prayer':'We’d love to hear from you'}</h3>
+    <h3>{kind === 'prayer' ? 'A space for your prayer' : 'We’d love to hear from you'}</h3>
     <div className="form-row">
-      <label>Your name<input name="name" required maxLength={100} autoComplete="name" aria-label="Your name"/></label>
-      <label>Email address<input name="email" type="email" required maxLength={254} autoComplete="email" aria-label="Email address"/></label>
+      <label>Your name<input name="name" required maxLength={100} autoComplete="name" aria-label="Your name" /></label>
+      <label>Email address<input name="email" type="email" required maxLength={254} autoComplete="email" aria-label="Email address" /></label>
     </div>
-    {kind==='prayer'&&<label>Prayer category<select value={category} onChange={e=>setCategory(e.target.value)} aria-label="Prayer category">{['Personal prayer','Birthday prayer','Healing','Family','Guidance','Thanksgiving','Other'].map(c=><option key={c}>{c}</option>)}</select></label>}
-    {kind==='prayer'&&category==='Birthday prayer'&&<>
-      <label>Birthday<input type="date" name="birthday" required aria-label="Birthday"/></label>
-      <label className="checkbox"><input type="checkbox" name="birthdayConsent" required/>I agree to share this birthday privately with the prayer team.</label>
+    {kind === 'prayer' && <label>Prayer category<select value={category} onChange={e => setCategory(e.target.value)} aria-label="Prayer category">{['Personal prayer', 'Birthday prayer', 'Healing', 'Family', 'Guidance', 'Thanksgiving', 'Other'].map(c => <option key={c}>{c}</option>)}</select></label>}
+    {kind === 'prayer' && category === 'Birthday prayer' && <>
+      <label>Birthday<input type="date" name="birthday" required aria-label="Birthday" /></label>
+      <label className="checkbox"><input type="checkbox" name="birthdayConsent" required />I agree to share this birthday privately with the prayer team.</label>
     </>}
-    <label>{kind==='prayer'?'Your prayer request':'Your message'}<textarea name="message" defaultValue={kind==='prayer'?prayerDraft:''} required minLength={10} maxLength={5000} rows={6} placeholder="Share what’s on your heart…" aria-label={kind==='prayer'?'Your prayer request':'Your message'}/></label>
+    <label>{kind === 'prayer' ? 'Your prayer request' : 'Your message'}<textarea name="message" defaultValue={kind === 'prayer' ? prayerDraft : ''} required minLength={10} maxLength={5000} rows={6} placeholder="Share what’s on your heart…" aria-label={kind === 'prayer' ? 'Your prayer request' : 'Your message'} /></label>
     <div className="privacy-note">Private to the prayer team. Requests and birthdays are never published or stored in this website’s database.</div>
-    <button className="btn navy" disabled={busy}>{busy?'Sending…':'Submit private request'}<ArrowRight size={17}/></button>
+    <button className="btn navy" disabled={busy}>{busy ? 'Sending…' : 'Submit private request'}<ArrowRight size={17} /></button>
     <p className="small muted">Recipient: maker200222@gmail.com. Automatic delivery requires the ministry’s Gmail connection. If unavailable, you can review and send your request in Gmail.</p>
-    {status&&<p className="form-status" role="status">{status}</p>}
-    {compose&&<a className="btn outline" href={compose} target="_blank" rel="noopener noreferrer" aria-label="Review and send in Gmail (opens in new window)"><Mail size={17}/>Review and send in Gmail</a>}
+    {status && <p className="form-status" role="status">{status}</p>}
+    {compose && <a className="btn outline" href={compose} target="_blank" rel="noopener noreferrer" aria-label="Review and send in Gmail (opens in new window)"><Mail size={17} />Review and send in Gmail</a>}
   </form>;
 }
 
 function Prayer() {
   useTitle('Prayer Requests & Support — Anointing Ministries');
   return <>
-    <PageTitle tag="YOU ARE NOT ALONE" title={<>Let us pray <em>with you.</em></>} text="No matter what you’re facing, you don’t have to walk through it alone."/>
+    <PageTitle tag="YOU ARE NOT ALONE" title={<>Let us pray <em>with you.</em></>} text="No matter what you’re facing, you don’t have to walk through it alone." />
     <section className="section pt0 prayer-layout">
       <aside>
-        <span className="prayer-icon"><Heart size={28} strokeWidth={1}/></span>
+        <span className="prayer-icon"><Heart size={28} strokeWidth={1} /></span>
         <h2>Every prayer<br /><em>matters.</em></h2>
         <p>Bring your hopes, your worries, and the things you don’t yet have words for.</p>
         <blockquote>“Casting all your care upon him; for he careth for you.”</blockquote>
@@ -1697,8 +1736,8 @@ function Prayer() {
 function About() {
   useTitle('About Us & Our Mission — Anointing Ministries');
   return <>
-    <PageTitle tag="ROOTED IN FAITH. GROWING IN LOVE." title={<>A community.<br /><em>A place to call home.</em></>} text="A welcoming vision for a church centered on faith, worship, and community."/>
-    <div className="about-image"><Img name="congregation" alt="Anointing Ministries congregation"/></div>
+    <PageTitle tag="ROOTED IN FAITH. GROWING IN LOVE." title={<>A community.<br /><em>A place to call home.</em></>} text="A welcoming vision for a church centered on faith, worship, and community." />
+    <div className="about-image"><Img name="congregation" alt="Anointing Ministries congregation" /></div>
     <section className="section story">
       <div>
         <Tag>OUR STORY</Tag>
@@ -1727,10 +1766,10 @@ function About() {
       <h2>Faith lives <em>here.</em></h2>
       <p className="muted">Our congregation and ministry memories, from the official YouTube channel.</p>
       <div className="gallery">
-        <Img name="congregation" alt="Anointing Ministries congregation"/>
-        <Img name="christmas-community" alt="Christmas Rally 2024 — official channel thumbnail"/>
+        <Img name="congregation" alt="Anointing Ministries congregation" />
+        <Img name="christmas-community" alt="Christmas Rally 2024 — official channel thumbnail" />
       </div>
-      <Link to="/worship" className="btn navy">Explore worship <ArrowRight size={17}/></Link>
+      <Link to="/worship" className="btn navy">Explore worship <ArrowRight size={17} /></Link>
     </section>
   </>;
 }
@@ -1738,21 +1777,30 @@ function About() {
 function Contact() {
   useTitle('Contact Us & Location — Anointing Ministries');
   return <>
-    <PageTitle tag="LET’S CONNECT" title={<>Your next step<br /><em>starts here.</em></>} text="Questions, a first visit, or simply a hello. We’d love to connect."/>
+    <PageTitle tag="LET’S CONNECT" title={<>Your next step<br /><em>starts here.</em></>} text="Questions, a first visit, or simply a hello. We’d love to connect." />
     <section className="section pt0 prayer-layout">
       <aside>
         <Tag>ANOINTING MINISTRIES</Tag>
         <h2>Come as <em>you are.</em></h2>
         <div className="contact-info">
-          <p><MapPin size={20}/><span>Our location<small>{config.address || 'Church address to be provided'}</small></span></p>
-          <p><Mail size={20}/><span>Get in touch<small>{config.email || 'Verified email and phone to be provided'}</small></span></p>
-          <p><Clock size={20}/><span>Service timings<small>{config.nextServiceISO || 'Service schedule to be confirmed'}</small></span></p>
+          <p><MapPin size={20} /><span>Our location<small>{config.address || 'Church address to be provided'}</small></span></p>
+          <p><Mail size={20} /><span>Get in touch<small>{config.email || 'Verified email and phone to be provided'}</small></span></p>
+          <p><Clock size={20} /><span>Service timings<small>{config.nextServiceISO || 'Service schedule to be confirmed'}</small></span></p>
         </div>
-        {config.mapEmbedUrl ? <iframe title="Church location map" src={config.mapEmbedUrl}/> : <div className="map-placeholder"><MapPin size={30}/><p>Madukkarai, Coimbatore</p><a className="text-link" href={config.googleUrl} target="_blank" rel="noopener noreferrer" aria-label="Open shared Google location (opens in new window)">Open shared Google location <ArrowUpRight size={15}/></a></div>}
+        <iframe
+          title="Anointing Ministries Church Location"
+          src={config.mapEmbedUrl || "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3917.743643688904!2d76.9432104!3d10.907076999999997!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3ba85b14bd4b16c1%3A0x1eace48f5414ba03!2sAnointing%20Ministries%20Church!5e0!3m2!1sen!2sin!4v1792589778515!5m2!1sen!2sin"}
+          width="600"
+          height="450"
+          style={{ border: 0 }}
+          allowFullScreen
+          loading="lazy"
+          referrerPolicy="strict-origin-when-cross-origin"
+        />
         <p className="small muted">Connect with us through our ministry channels below.</p>
-        <SocialLinks/>
+        <SocialLinks />
       </aside>
-      <PrivateForm kind="contact"/>
+      <PrivateForm kind="contact" />
     </section>
   </>;
 }
