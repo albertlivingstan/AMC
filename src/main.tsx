@@ -1383,11 +1383,33 @@ function Live() {
   });
 
   useEffect(() => {
+    // 1. Fetch live broadcast or latest Sunday service from /api/live
+    fetch('/api/live')
+      .then(res => res.ok ? res.json() : null)
+      .then(data => {
+        if (data && data.videoId) {
+          setLiveData((prev: any) => ({
+            ...prev,
+            isLive: data.status === 'live',
+            videoId: data.videoId,
+            title: data.title || prev.title,
+            nextService: data.nextService || prev.nextService
+          }));
+        }
+      })
+      .catch(() => {});
+
+    // 2. Sync real-time Firestore broadcast override if configured by admin
     if (!db) return;
     try {
       const unsub = onSnapshot(doc(db, 'settings', 'live_broadcast'), (snap: any) => {
         if (snap.exists()) {
-          setLiveData(snap.data());
+          const data = snap.data();
+          setLiveData((prev: any) => ({
+            ...prev,
+            ...data,
+            videoId: data.videoId || prev.videoId
+          }));
         }
       }, () => {});
       return () => unsub();
