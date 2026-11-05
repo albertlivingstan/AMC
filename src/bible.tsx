@@ -68,13 +68,15 @@ export async function getBook(lang: string, id: number) {
 }
 
 export function useLocal<T>(key: string, initial: T) {
-  const [v, set] = useState<T>(() => {
+  const [v, set] = useState<T>(initial);
+  useEffect(() => {
     try {
-      return JSON.parse(localStorage.getItem(key) || 'null') ?? initial;
-    } catch {
-      return initial;
-    }
-  });
+      const item = localStorage.getItem(key);
+      if (item !== null) {
+        set(JSON.parse(item));
+      }
+    } catch {}
+  }, [key]);
   useEffect(() => {
     try {
       localStorage.setItem(key, JSON.stringify(v));

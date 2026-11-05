@@ -29,11 +29,13 @@ if (typeof window !== 'undefined') {
 }
 
 export function useTheme() {
-  const [theme, setThemeState] = useState<Theme>(getInitialTheme);
+  const [theme, setThemeState] = useState<Theme>('light');
 
   useEffect(() => {
-    applyTheme(theme);
-  }, [theme]);
+    const current = getInitialTheme();
+    setThemeState(current);
+    applyTheme(current);
+  }, []);
 
   useEffect(() => {
     const sync = () => {

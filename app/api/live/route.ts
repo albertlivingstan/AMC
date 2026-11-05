@@ -27,7 +27,7 @@ export async function GET() {
   };
 
   try {
-    // 1. If YouTube API Key is configured, check for active live broadcast
+    // If YouTube API Key is configured, use official API
     if (e.YOUTUBE_API_KEY) {
       const url = new URL('https://www.googleapis.com/youtube/v3/search');
       url.search = new URLSearchParams({
@@ -50,36 +50,8 @@ export async function GET() {
             title: hit.snippet?.title || 'Live Worship Service',
             channel: 'https://www.youtube.com/@AnointingMinistries',
             liveUrl: 'https://www.youtube.com/@AnointingMinistries/live',
-            nextService: 'Sunday 9:00 AM & 6:30 PM IST',
-            location: 'Madukkarai Sanctuary, Coimbatore',
             checkedAt: new Date().toISOString()
           };
-        }
-      }
-
-      // If not currently live, fetch the latest published Sunday service / video from the channel
-      if (state.status !== 'live') {
-        try {
-          const uploadsPlaylistId = CHANNEL.replace(/^UC/, 'UU');
-          const playlistUrl = new URL('https://www.googleapis.com/youtube/v3/playlistItems');
-          playlistUrl.search = new URLSearchParams({
-            part: 'snippet',
-            playlistId: uploadsPlaylistId,
-            maxResults: '1',
-            key: e.YOUTUBE_API_KEY
-          }).toString();
-
-          const pRes = await fetch(playlistUrl, { signal: AbortSignal.timeout(6000) });
-          if (pRes.ok) {
-            const pData: any = await pRes.json();
-            const latest = pData?.items?.[0]?.snippet;
-            if (latest?.resourceId?.videoId) {
-              state.videoId = latest.resourceId.videoId;
-              state.title = latest.title || state.title;
-            }
-          }
-        } catch (e) {
-          console.warn('Error fetching latest video from uploads playlist:', e);
         }
       }
     } else {
@@ -101,34 +73,12 @@ export async function GET() {
               ...live,
               channel: 'https://www.youtube.com/@AnointingMinistries',
               liveUrl: 'https://www.youtube.com/@AnointingMinistries/live',
-              nextService: 'Sunday 9:00 AM & 6:30 PM IST',
-              location: 'Madukkarai Sanctuary, Coimbatore',
               checkedAt: new Date().toISOString()
             };
           }
         }
       } catch {
         // Fallback gracefully without throwing
-      }
-
-      // Fallback: If still default video and no API key, check channel RSS for the latest video
-      if (state.videoId === DEFAULT_VIDEO_ID) {
-        try {
-          const rss = await fetch(`https://www.youtube.com/feeds/videos.xml?channel_id=${CHANNEL}`, {
-            signal: AbortSignal.timeout(5000)
-          });
-          if (rss.ok) {
-            const text = await rss.text();
-            const idMatch = text.match(/<yt:videoId>([^<]+)<\/yt:videoId>/);
-            const titleMatches = text.match(/<title>([^<]+)<\/title>/g);
-            if (idMatch && idMatch[1]) {
-              state.videoId = idMatch[1];
-              if (titleMatches && titleMatches[1]) {
-                state.title = titleMatches[1].replace(/<\/?title>/g, '');
-              }
-            }
-          }
-        } catch {}
       }
     }
   } catch (err) {

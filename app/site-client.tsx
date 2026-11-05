@@ -26,16 +26,18 @@ export default function SiteClient() {
     return () => { active = false; };
   }, []);
 
+  if (!mounted) {
+    return <div style={{ minHeight: '100vh', background: '#0a0f19' }} />;
+  }
+
   const Comp = AppComp;
   return (
     <StartupSplash ready={ready}>
-      {mounted && Comp ? (
+      {Comp ? (
         <BrowserRouter>
           <Comp />
         </BrowserRouter>
-      ) : (
-        <div style={{ minHeight: '100vh', background: '#0a0f19' }} />
-      )}
+      ) : null}
     </StartupSplash>
   );
 }
